@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+</head>
+<script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
+<script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
+<script type="text/javascript">
+    ;!function(){
+        var layer = layui.layer
+            ,form = layui.form;
+
+    }();
+    $(function (){
+        var form = layui.form;
+        form.render();
+        $.ajax({
+            type: "GET",
+            url: "${request.contextPath}/business/line/query/${id}",
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.success) {
+                    form.val('form', {
+                        "name": data.data.name
+                        ,"id": data.data.id
+                        ,"desc": data.data.desc
+                    });
+                } else {
+                    layer.msg(data.message);
+                }
+            }
+        });
+        form.on('submit(save)', function (data) {
+            var param = JSON.stringify(data.field);
+            $.ajax({
+                type: "PUT",
+                url: "${request.contextPath}/business/line/save",
+                data: param,
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                    } else {
+                        layer.msg(data.message);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+
+</script>
+<body>
+<fieldset class="layui-elem-field"  >
+    <legend>编辑</legend>
+    <div class="layui-field-box">
+        <form class="layui-form" id="businessLineForm" lay-filter="form">
+            <input type="text" name="id" value="${id}" hidden="hidden">
+            <div class="layui-form-item">
+                <label class="layui-form-label">业务线名称</label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" name="desc" lay-verify="" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</fieldset>
+</body>
+</html>
