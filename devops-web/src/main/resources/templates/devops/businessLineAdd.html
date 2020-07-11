@@ -2,7 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Insert title here</title>
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
     <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
 </head>
@@ -16,9 +22,12 @@
     }();
     $(function (){
         var form = layui.form;
+        layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
         form.render();
-
         form.on('submit(save)', function (data) {
+            //弹出loading
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
             var param = JSON.stringify(data.field);
             $.ajax({
                 type: "PUT",
@@ -26,11 +35,19 @@
                 data: param,
                 contentType: 'application/json',
                 success: function (data) {
+                    var message = "";
                     if (data.code == 200) {
-                        layer.msg("保存成功");
+                        message = "保存成功";
                     } else {
-                        layer.msg(data.message);
+                        message = data.message;
                     }
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
                 }
             });
             return false;
@@ -42,7 +59,7 @@
     }
 </script>
 <body class="childrenBody">
-<fieldset class="layui-elem-field"  >
+<fieldset class="layui-elem-field">
     <legend>新增</legend>
     <div class="layui-field-box">
         <form class="layui-form" id="businessLineForm">
@@ -68,7 +85,7 @@
                 <div class="layui-input-block">
                     <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                    <a onclick="back()" class="layui-btn layui-btn-normal layui-btn-radius" target="_blank">返回</a>
+                    <!--<a href="${request.contextPath}/business/line/index" class="layui-btn layui-btn-normal layui-btn-radius" target="_blank">返回</a>-->
                 </div>
             </div>
         </form>
