@@ -2,14 +2,14 @@
   "contentManagement": [
     {
       "title": "业务线管理",
-      "icon": "icon-text",
+      "icon": "&#xe857;",
       "href": "business/line/index",
       "spread": false
     },
     {
       "title": "服务管理",
       "icon": "&#xe634;",
-      "href": "page/img/images.html",
+      "href": "service/index",
       "spread": false
     },
     {

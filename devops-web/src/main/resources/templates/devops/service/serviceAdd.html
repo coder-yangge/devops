@@ -15,9 +15,13 @@
     }();
     $(function (){
         var form = layui.form;
+        layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
         form.render();
 
         form.on('submit(save)', function (data) {
+            //弹出loading
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
             var param = JSON.stringify(data.field);
             $.ajax({
                 type: "PUT",
@@ -25,11 +29,19 @@
                 data: param,
                 contentType: 'application/json',
                 success: function (data) {
+                    var message = "";
                     if (data.code == 200) {
-                        layer.msg("保存成功", {icon: 1});
+                        message = "保存成功";
                     } else {
-                        layer.msg(data.message, {icon: 1});
+                        message = data.message;
                     }
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
                 }
             });
             return false;
@@ -67,7 +79,7 @@
                 <div class="layui-input-block">
                     <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                    <a onclick="back()" class="layui-btn layui-btn-normal layui-btn-radius" target="_blank">返回</a>
+                   <!-- <a onclick="back()" class="layui-btn layui-btn-normal layui-btn-radius" target="_blank">返回</a>-->
                 </div>
             </div>
         </form>
