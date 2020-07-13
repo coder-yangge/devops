@@ -23,6 +23,9 @@ public class Service implements Serializable {
     @Column(name = "`desc`")
     private String desc;
 
+    @Column(name = "business_line_id")
+    private Integer businessLineId;
+
     @Column(name = "create_date", nullable = false)
     private Timestamp createDate;
 

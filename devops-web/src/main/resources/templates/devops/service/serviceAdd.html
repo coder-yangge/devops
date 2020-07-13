@@ -17,8 +17,19 @@
         var form = layui.form;
         layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery;
-        form.render();
 
+        $.ajax({
+            url: '${request.contextPath}/business/line/query',
+            type: 'get',
+            async: false,
+            success: function (data) {
+                $.each(data.data, function (index, item) {
+                    console.log(item);
+                    $('#businessLineId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                });
+            }
+        });
+        form.render();
         form.on('submit(save)', function (data) {
             //弹出loading
             var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
@@ -57,6 +68,16 @@
     <legend>新增</legend>
     <div class="layui-field-box">
         <form class="layui-form" id="serviceForm">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">业务线</label>
+                    <div class="layui-input-inline">
+                        <select name="businessLineId" lay-filter="businessLine" id="businessLineId">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">服务名称</label>
                 <div class="layui-input-inline" style="width: 300px;">

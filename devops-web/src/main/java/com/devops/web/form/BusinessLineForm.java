@@ -20,7 +20,4 @@ public class BusinessLineForm {
 
     private String desc;
 
-    private Timestamp createDate;
-
-    private String createUser;
 }

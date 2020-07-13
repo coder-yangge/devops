@@ -2,6 +2,8 @@ package com.devops.service.impl;
 
 import com.devops.common.dto.PageDTO;
 import com.devops.dto.ServiceDTO;
+import com.devops.entity.BusinessLine;
+import com.devops.repository.BusinessLineRepository;
 import com.devops.repository.ServiceRepository;
 import com.devops.service.Service;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +35,8 @@ public class ServiceImpl implements Service {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    @Autowired
+    private BusinessLineRepository businessLineRepository;
 
     @Override
     public ServiceDTO save(ServiceDTO dto) {
@@ -58,7 +62,14 @@ public class ServiceImpl implements Service {
         BeanUtils.copyProperties(serviceDTO, entity);
         Pageable pageable = PageRequest.of(pageDTO.getPageNum() -1, pageDTO.getPageSize());
         Page<com.devops.entity.Service> servicePage = serviceRepository.findAll(buildSpecification(serviceDTO), pageable);
-        return PageDTO.of(servicePage, ServiceDTO::new, BeanUtils::copyProperties);
+        PageDTO<ServiceDTO> page = PageDTO.of(servicePage, ServiceDTO::new, BeanUtils::copyProperties);
+        page.getData().forEach(e ->{
+            Optional<BusinessLine> businessLine = businessLineRepository.findById(e.getBusinessLineId());
+            if (businessLine.isPresent()) {
+                e.setBusinessLineName(businessLine.get().getName());
+            }
+        });
+        return page;
     }
 
     @Override
@@ -71,6 +82,10 @@ public class ServiceImpl implements Service {
             serviceList.forEach(e ->{
                 ServiceDTO dto = new ServiceDTO();
                 BeanUtils.copyProperties(e, dto);
+                Optional<BusinessLine> businessLine = businessLineRepository.findById(e.getBusinessLineId());
+                if (businessLine.isPresent()) {
+                    dto.setBusinessLineName(businessLine.get().getName());
+                }
                 dtoList.add(dto);
             });
         }
