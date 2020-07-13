@@ -3,6 +3,8 @@ package com.devops.service;
 import com.devops.common.dto.PageDTO;
 import com.devops.dto.BusinessLineDTO;
 
+import java.util.List;
+
 /**
  * @author yangge
  * @version 1.0.0
@@ -18,4 +20,6 @@ public interface BusinessLineService {
     BusinessLineDTO queryById(Integer id);
 
     void deleteById(Integer id);
+
+    List<BusinessLineDTO> getAll();
 }

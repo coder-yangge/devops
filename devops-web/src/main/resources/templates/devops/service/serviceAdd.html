@@ -15,9 +15,24 @@
     }();
     $(function (){
         var form = layui.form;
-        form.render();
+        layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
 
+        $.ajax({
+            url: '${request.contextPath}/business/line/query',
+            type: 'get',
+            async: false,
+            success: function (data) {
+                $.each(data.data, function (index, item) {
+                    console.log(item);
+                    $('#businessLineId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                });
+            }
+        });
+        form.render();
         form.on('submit(save)', function (data) {
+            //弹出loading
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
             var param = JSON.stringify(data.field);
             $.ajax({
                 type: "PUT",
@@ -25,11 +40,19 @@
                 data: param,
                 contentType: 'application/json',
                 success: function (data) {
+                    var message = "";
                     if (data.code == 200) {
-                        layer.msg("保存成功", {icon: 1});
+                        message = "保存成功";
                     } else {
-                        layer.msg(data.message, {icon: 1});
+                        message = data.message;
                     }
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
                 }
             });
             return false;
@@ -45,6 +68,16 @@
     <legend>新增</legend>
     <div class="layui-field-box">
         <form class="layui-form" id="serviceForm">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">业务线</label>
+                    <div class="layui-input-inline">
+                        <select name="businessLineId" lay-filter="businessLine" id="businessLineId">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">服务名称</label>
                 <div class="layui-input-inline" style="width: 300px;">
@@ -67,7 +100,7 @@
                 <div class="layui-input-block">
                     <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                    <a onclick="back()" class="layui-btn layui-btn-normal layui-btn-radius" target="_blank">返回</a>
+                   <!-- <a onclick="back()" class="layui-btn layui-btn-normal layui-btn-radius" target="_blank">返回</a>-->
                 </div>
             </div>
         </form>

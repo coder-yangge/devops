@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 
 @Data
 public class ServiceDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private Integer id;
@@ -20,5 +21,7 @@ public class ServiceDTO implements Serializable {
 
     private String createUser;
 
-    
+    private Integer businessLineId;
+
+    private String businessLineName;
 }

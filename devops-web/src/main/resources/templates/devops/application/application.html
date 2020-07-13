@@ -2,8 +2,15 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>服务列表</title>
+    <title>应用列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
 </head>
 <script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
 <script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
@@ -16,8 +23,8 @@
         form.render();
         form.on('submit(query)', function (data) {
             var param = JSON.stringify(data.field);
-            table.reload('service',{
-                url: '${request.contextPath}/service/page',
+            table.reload('application',{
+                url: '${request.contextPath}/application/page',
                 where: data.field
             });
             return false;
@@ -27,8 +34,8 @@
     $(function (){
         var table = layui.table;
         table.render({
-            elem: '#service'
-            ,url:'${request.contextPath}/service/page'
+            elem: '#application'
+            ,url:'${request.contextPath}/application/page'
             ,hight:380
             ,method: 'post'
             ,contentType: 'application/json'
@@ -51,9 +58,8 @@
             ,cols: [[
                 {type: 'checkbox', fixed: 'left'}
                 ,{field:'id', align: 'center', title: 'ID', sort: true}
-                ,{field:'name',  title: '服务名称' , align: 'center'}
+                ,{field:'name',  title: '应用名称' , align: 'center'}
                 ,{field:'desc', title: '描述', sort: true, align: 'center'}
-                ,{field:'businessLineName',  title: '所属业务线' , align: 'center'}
                 ,{field:'createUser', title: '创建人', align: 'center'}
                 ,{field:'createDate', title: '创建时间', align: 'center'}
                 ,{fixed: 'right', width:200, title:'操作', toolbar: '#barDemo', align: 'center'}
@@ -61,7 +67,7 @@
             ,page: true
         });
         //监听行工具事件
-        table.on('tool(service)', function(obj){
+        table.on('tool(application)', function(obj){
             var data = obj.data;
             //console.log(obj)
             if(obj.event === 'detail'){
@@ -72,7 +78,7 @@
                     title: "编辑",
                     skin: 'layui-layer-molv',
                     area: ['800px', '500px'],
-                    content: "${request.contextPath}/service/editPage?id=" + data.id,
+                    content: "${request.contextPath}/application/editPage?id=" + data.id,
                     btn: ['取消'],
                     btnAlign: 'c',
                     yes: function(index, layero){
@@ -81,23 +87,21 @@
                     },
                     end: function(){
                         if(flag) {
-                            layer.msg("保存成功", {icon: 1});
+                            layer.msg("保存成功");
                             reloadTable();
                         }
                     }
                 });
-               // window.location.href="${request.contextPath}/service/editPage?id=" + data.id
             }
         });
 
         //头工具栏事件
-        table.on('toolbar(service)', function(obj){
+        table.on('toolbar(application)', function(obj){
             var checkStatus = table.checkStatus(obj.config.id);
             var data = checkStatus.data;
             switch(obj.event){
                 case 'add':
-                    addService();
-                    // window.location.href="${request.contextPath}/service/savePage"
+                    addApplication();
                     break;
                 case 'delete':
                     if (data.length > 1){
@@ -111,17 +115,15 @@
                     var params = data[0].id;
                     $.ajax({
                         type: 'DELETE',
-                        url: '${request.contextPath}/service/delete/' + params,
+                        url: '${request.contextPath}/application/delete/' + params,
                         success: function(response){
                             if (response.success) {
                                 layer.open({
-                                    offset: '100px',
                                     skin: 'layui-layer-molv',
                                     content: "删除成功"
                                 });
                             } else {
                                 layer.open({
-                                    offset: '100px',
                                     skin: 'layui-layer-molv',
                                     content: "" + response.message
                                 });
@@ -135,18 +137,17 @@
     });
     function reloadTable(){
         var table = layui.table;
-        table.reload('service',{
-            url: '${request.contextPath}/service/page'
+        table.reload('application',{
+            url: '${request.contextPath}/application/page'
         });
     }
 
-
     //添加
-    function addService(){
+    function addApplication(){
         var index = layui.layer.open({
             title : "新增",
             type : 2,
-            content : "${request.contextPath}/service/savePage",
+            content : "${request.contextPath}/application/savePage",
             success : function(layero, index){
                 setTimeout(function(){
                     layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
@@ -171,15 +172,15 @@
     <a class="layui-btn layui-btn-xs" lay-event="add">新增</a>
     <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
 </script>
-<body>
+<body class="childrenBody">
 <div class="table-list roll-x">
     <fieldset class="layui-elem-field">
         <legend>查询条件</legend>
         <div class="layui-field-box">
-            <form class="layui-form" id="serviceForm">
+            <form class="layui-form" id="applicationForm">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">服务名称</label>
+                        <label class="layui-form-label">应用名称</label>
                         <div class="layui-input-inline" style="width: 300px;">
                             <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
                         </div>
@@ -194,7 +195,7 @@
             </form>
         </div>
     </fieldset>
-    <table class="layui-hide" id="service" lay-filter="service"></table>
+    <table class="layui-hide" id="application" lay-filter="application"></table>
 </div>
 </body>
 </html>

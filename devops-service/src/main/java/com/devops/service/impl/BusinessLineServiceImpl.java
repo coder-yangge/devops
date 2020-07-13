@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
@@ -77,5 +78,19 @@ public class BusinessLineServiceImpl implements BusinessLineService {
             new BizException("业务线不存在");
         }
         businessLineRepository.deleteById(id);
+    }
+
+    @Override
+    public List<BusinessLineDTO> getAll() {
+        List<BusinessLine> businessLines = businessLineRepository.findAll();
+        ArrayList<BusinessLineDTO> businessLineDTOs = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(businessLines)) {
+            businessLines.forEach(e ->{
+                BusinessLineDTO businessLineDTO = new BusinessLineDTO();
+                BeanUtils.copyProperties(e, businessLineDTO);
+                businessLineDTOs.add(businessLineDTO);
+            });
+        }
+        return businessLineDTOs;
     }
 }

@@ -27,16 +27,20 @@ public class PageDTO<T> {
     private List<T> data;
 
     public static<T, R> PageDTO<T> of(Page<R> page, Supplier<T> supplier, BiConsumer<R, T> function) {
-        PageDTO pageDTO = new PageDTO();
-        pageDTO.setPageNum(page.getNumber());
-        pageDTO.setPageSize(page.getSize());
-        pageDTO.setTotal(page.getTotalElements());
-        pageDTO.setTotalPage(page.getTotalPages());
         List<T> data = page.get().map(r -> {
             T t = supplier.get();
             function.accept(r, t);
             return t;
         }).collect(Collectors.toList());
+        return of(page, data);
+    }
+
+    public static<T, R> PageDTO<T> of(Page<R> page, List<T> data) {
+        PageDTO pageDTO = new PageDTO();
+        pageDTO.setPageNum(page.getNumber());
+        pageDTO.setPageSize(page.getSize());
+        pageDTO.setTotal(page.getTotalElements());
+        pageDTO.setTotalPage(page.getTotalPages());
         pageDTO.setData(data);
         return pageDTO;
     }

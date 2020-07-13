@@ -20,7 +20,5 @@ public class ServiceForm {
 
     private String desc;
 
-    private Timestamp createDate;
-
-    private String createUser;
+    private Integer businessLineId;
 }
