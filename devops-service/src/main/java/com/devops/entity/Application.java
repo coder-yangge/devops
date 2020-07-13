@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Table(name = "t_application")
 @Data
@@ -17,10 +18,10 @@ public class Application implements Serializable {
     @Column(name = "id", insertable = false, nullable = false)
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "`name`", nullable = false)
     private String name;
 
-    @Column(name = "desc")
+    @Column(name = "`desc`")
     private String desc;
 
     @Column(name = "business_line_id", nullable = false)
@@ -30,7 +31,7 @@ public class Application implements Serializable {
     private Integer serviceId;
 
     @Column(name = "create_date", nullable = false)
-    private Timestamp createDate;
+    private Date createDate;
 
     @Column(name = "create_user")
     private String createUser;

@@ -1,6 +1,7 @@
 package com.devops.dto;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -17,7 +18,7 @@ public class ApplicationDto {
 
     private Integer serviceId;
 
-    private Timestamp createDate;
+    private Date createDate;
 
     private String createUser;
 }
