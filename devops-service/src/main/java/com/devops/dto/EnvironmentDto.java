@@ -30,6 +30,12 @@ public class EnvironmentDto {
 
     private String startScript;
 
+    private String packageCommand;
+
+    private String packageArg;
+
+    private String packagePath;
+
     private Timestamp createDate;
 
     private String createUser;

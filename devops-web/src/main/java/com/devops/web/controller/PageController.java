@@ -65,4 +65,5 @@ public class PageController {
     public String applicationSavePage() {
         return "/devops/application/applicationAdd";
     }
+
 }

@@ -33,7 +33,7 @@ public class Repository implements Serializable {
     private String userName;
 
     @Column(name = "pass_word")
-    private String password;
+    private String passWord;
 
     @Column(name = "create_date", nullable = false)
     private Timestamp createDate;

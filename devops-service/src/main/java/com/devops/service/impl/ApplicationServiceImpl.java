@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.devops.dto.RepositoryDto;
+import com.devops.dto.*;
 import com.devops.entity.BusinessLine;
 import com.devops.entity.Environment;
 import com.devops.entity.Repository;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import com.devops.common.dto.PageDTO;
 import com.devops.common.exception.BizException;
-import com.devops.dto.ApplicationDto;
 import com.devops.entity.Application;
 import com.devops.service.ApplicationService;
 import com.devops.service.specification.ApplicationSpecs;
@@ -56,13 +55,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         Page<Application> applicationPage = applicationRepository.findAll(specification, pageable);
 		List<Application> content = applicationPage.getContent();
 		List<ApplicationDto> dtoList = new ArrayList<>();
-		if (!CollectionUtils.isEmpty(content)) {
-			content.forEach(e ->{
-				ApplicationDto dto = new ApplicationDto();
-				convert(e, dto);
-				dtoList.add(dto);
-			});
-		}
+		convert(content, dtoList, false);
 		return PageDTO.of(applicationPage, dtoList);
 	}
 
@@ -102,7 +95,7 @@ public class ApplicationServiceImpl implements ApplicationService{
 		if(applicationOptional.isPresent()) {
 			ApplicationDto applicationDto = new ApplicationDto();
 			Application application = applicationOptional.get();
-			convert(application, applicationDto);
+			convert(application, applicationDto, true);
 			return applicationDto;
 		}
 		return null;
@@ -119,12 +112,41 @@ public class ApplicationServiceImpl implements ApplicationService{
 		environmentRepository.deleteByApplicationId(id);
 	}
 
-	private void convert(Application application, ApplicationDto applicationDto) {
+	@Override
+	public List<ApplicationDto> getApplicationList() {
+		List<Application> applicationList = applicationRepository.findAll();
+		List<ApplicationDto> dtoList = new ArrayList<>();
+		convert(applicationList, dtoList, true);
+		return dtoList;
+	}
+
+	private void convert(Application application, ApplicationDto applicationDto, boolean deep) {
 		BeanUtils.copyProperties(application, applicationDto);
 		applicationDto.setBusinessLineId(application.getBusinessLine().getId());
 		applicationDto.setBusinessLineName(application.getBusinessLine().getName());
 		applicationDto.setServiceId(application.getService().getId());
 		applicationDto.setServiceName(application.getService().getName());
+		if (deep) {
+			RepositoryDto repositoryDto = new RepositoryDto();
+			EnvironmentDto environmentDto = new EnvironmentDto();
+			Repository repository = repositoryRepository.findByApplicationId(application.getId());
+			Environment environment = environmentRepository.findByApplicationId(application.getId());
+			BeanUtils.copyProperties(repository, repositoryDto);
+			BeanUtils.copyProperties(environment, environmentDto);
+			applicationDto.setEnvironment(environmentDto);
+			applicationDto.setRepository(repositoryDto);
+		}
+	}
+
+	private void convert(List<Application> applicationList, List<ApplicationDto> dtoList, boolean deep) {
+		if (!CollectionUtils.isEmpty(applicationList)) {
+			applicationList.forEach(e ->{
+				ApplicationDto dto = new ApplicationDto();
+				convert(e, dto, deep);
+				dtoList.add(dto);
+			});
+		}
+
 	}
 
 }

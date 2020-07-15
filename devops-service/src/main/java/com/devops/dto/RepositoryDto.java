@@ -26,7 +26,7 @@ public class RepositoryDto {
 
     private String userName;
 
-    private String password;
+    private String passWord;
 
     private Timestamp createDate;
 

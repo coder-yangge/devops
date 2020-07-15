@@ -58,6 +58,7 @@ layui.use(['bodyTab','form','element','layer','jquery'],function(){
             return false;
         }
         $(".layui-layout-admin").toggleClass("showMenu");
+        $("#menuIcon").toggleClass("layui-icon-spread-left");
         //渲染顶部窗口
         tab.tabMove();
     })

@@ -43,15 +43,15 @@
   ],
   "applicationBuild": [
     {
-      "title": "用户中心",
-      "icon": "&#xe612;",
-      "href": "page/user/userList.html",
+      "title": "立即构建",
+      "icon": "&#xe62e;",
+      "href": "application/build/index",
       "spread": false
     },
     {
-      "title": "会员等级",
-      "icon": "icon-vip",
-      "href": "page/user/userGrade.html",
+      "title": "构建记录",
+      "icon": "&#xe60a;",
+      "href": "page/user/userList.html",
       "spread": false
     }
   ],

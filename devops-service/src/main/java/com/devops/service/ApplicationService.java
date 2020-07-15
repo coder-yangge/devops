@@ -3,6 +3,8 @@ package com.devops.service;
 import com.devops.common.dto.PageDTO;
 import com.devops.dto.ApplicationDto;
 
+import java.util.List;
+
 public interface ApplicationService {
 	
 	/**
@@ -31,4 +33,10 @@ public interface ApplicationService {
 	 * @param id
 	 */
 	void deleteById(Integer id);
+
+	/**
+	 * 查询列表
+	 * @return
+	 */
+	List<ApplicationDto> getApplicationList();
 }

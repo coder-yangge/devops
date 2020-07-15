@@ -44,5 +44,12 @@ public class Environment implements Serializable {
     @Column(name = "create_user")
     private String createUser;
 
-    
+    @Column(name = "package_command", nullable = false)
+    private String packageCommand;
+
+    @Column(name = "package_arg", nullable = false)
+    private String packageArg;
+
+    @Column(name = "package_path", nullable = false)
+    private String packagePath;
 }

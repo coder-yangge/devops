@@ -20,4 +20,10 @@ public class EnvironmentForm {
     private String deployPath;
 
     private String startScript;
+
+    private String packageCommand;
+
+    private String packageArg;
+
+    private String packagePath;
 }
