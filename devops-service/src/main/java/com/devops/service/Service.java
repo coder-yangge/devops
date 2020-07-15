@@ -23,4 +23,5 @@ public interface Service {
     List<ServiceDTO> getAll(ServiceDTO serviceDTO);
 
     ServiceDTO queryById(Integer id);
+
 }

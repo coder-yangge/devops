@@ -12,6 +12,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author yangge
  * @version 1.0.0
@@ -63,5 +65,13 @@ public class ServiceController {
     public ResponseVo deleteBusinessLine(@PathVariable Integer id) {
         service.delete(id);
         return ResponseBuilder.buildSuccess();
+    }
+
+    @GetMapping("/businessLine/query/{businessLineId}")
+    public ResponseVo getServiceList(@PathVariable(value = "businessLineId") Integer businessLineId) {
+        ServiceDTO serviceDTO = new ServiceDTO();
+        serviceDTO.setBusinessLineId(businessLineId);
+        List<ServiceDTO> serviceDTOS = service.getAll(serviceDTO);
+        return ResponseBuilder.buildSuccess(serviceDTOS);
     }
 }

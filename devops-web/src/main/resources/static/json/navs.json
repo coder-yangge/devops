@@ -13,6 +13,13 @@
       "spread": false
     },
     {
+      "title": "应用管理",
+      "icon": "&#xe653;",
+      "href": "application/index",
+      "spread": false
+    },
+
+    {
       "title": "其他页面",
       "icon": "&#xe630;",
       "href": "",

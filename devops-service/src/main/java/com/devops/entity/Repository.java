@@ -32,8 +32,8 @@ public class Repository implements Serializable {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "passwrod")
-    private String passwrod;
+    @Column(name = "pass_word")
+    private String password;
 
     @Column(name = "create_date", nullable = false)
     private Timestamp createDate;

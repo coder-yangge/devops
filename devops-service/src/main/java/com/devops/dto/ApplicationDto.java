@@ -1,6 +1,5 @@
 package com.devops.dto;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import lombok.Data;
@@ -16,9 +15,17 @@ public class ApplicationDto {
 
     private Integer businessLineId;
 
+    private String businessLineName;
+
+    private String serviceName;
+
     private Integer serviceId;
 
     private Date createDate;
 
     private String createUser;
+
+    private RepositoryDto repository;
+
+    private EnvironmentDto environment;
 }

@@ -68,7 +68,7 @@ public class BusinessLineController {
     }
 
     @GetMapping("/query")
-    public ResponseVo editBusinessLine() {
+    public ResponseVo getBusinessLineList() {
         List<BusinessLineDTO> businessLineDTOS = businessLineService.getAll();
         return ResponseBuilder.buildSuccess(businessLineDTOS);
     }

@@ -110,6 +110,9 @@ public class ServiceImpl implements Service {
             if (StringUtils.isNotBlank(serviceDTO.getName())) {
                 predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + serviceDTO.getName() + "%"));
             }
+            if (serviceDTO.getBusinessLineId() != null) {
+                predicate.add(criteriaBuilder.equal(root.get("businessLineId").as(Integer.class), serviceDTO.getBusinessLineId()));
+            }
             Predicate[] pre = new Predicate[predicate.size()];
             return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
         };

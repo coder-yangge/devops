@@ -1,5 +1,7 @@
 package com.devops.web.controller;
 
+import com.devops.dto.EnvironmentDto;
+import com.devops.dto.RepositoryDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +45,13 @@ public class ApplicationController {
 	@PutMapping("/save")
 	public ResponseVo<ApplicationDto> saveApplicationDto(@RequestBody ApplicationFrom applicationFrom) {
 		ApplicationDto applicationDto = new ApplicationDto();
+		RepositoryDto repositoryDto = new RepositoryDto();
+		EnvironmentDto environmentDto = new EnvironmentDto();
+		BeanUtils.copyProperties(applicationFrom.getRepository(), repositoryDto);
 		BeanUtils.copyProperties(applicationFrom, applicationDto);
+		BeanUtils.copyProperties(applicationFrom.getEnvironment(), environmentDto);
+		applicationDto.setRepository(repositoryDto);
+		applicationDto.setEnvironment(environmentDto);
 		applicationService.saveApplicationDto(applicationDto);
 		return ResponseBuilder.buildSuccess();
 	}

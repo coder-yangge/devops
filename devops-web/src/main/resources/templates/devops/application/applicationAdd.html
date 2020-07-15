@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+</head>
+<script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
+<script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
+<script type="text/javascript">
+    ;!function(){
+        var layer = layui.layer
+            ,form = layui.form;
+
+    }();
+    $(function (){
+        var form = layui.form;
+        layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
+
+        $.ajax({
+            url: '${request.contextPath}/business/line/query',
+            type: 'get',
+            async: false,
+            success: function (data) {
+                $.each(data.data, function (index, item) {
+                    $('#businessLineId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                });
+            }
+        });
+
+        form.render();
+        form.verify({
+
+        });
+        form.on('select(deployType)', function(data){
+            var deployType = data.value; //得到被选中的值
+            $('#deployId').empty();
+            var url = "";
+            if (deployType == 0) {
+                form.render();
+                return;
+            } else if (deployType == 1) {
+                url = '${request.contextPath}/machine/list'
+            } else {
+                url = '${request.contextPath}/cluster/list'
+            }
+            $.ajax({
+                url: url,
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#deployId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render();
+                }
+            });
+        });
+        form.on('select(businessLine)', function(data){
+            var businessLineId = data.value; //得到被选中的值
+            $('#serviceId').empty();
+            if (businessLineId == 0) {
+                form.render();
+                return;
+            }
+            $.ajax({
+                url: '${request.contextPath}/service/businessLine/query/' + businessLineId,
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    $.each(data.data, function (index, item) {
+                        $('#serviceId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render();
+                }
+            });
+        });
+        form.on('submit(save)', function (data) {
+            //弹出loading
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            var dataString = JSON.stringify(data.field);
+            var formData = JSON.parse(dataString);
+            var param = {
+                "name": formData.name,
+                "desc": formData.desc,
+                "businessLineId": formData.businessLineId,
+                "serviceId": formData.serviceId,
+                "repository": {
+                    "type": formData.repType,
+                    "address": formData.address,
+                    "userName": formData.userName,
+                    "passWord": formData.passWord
+                },
+                "environment": {
+                    "name": formData.envName,
+                    "deployPath": formData.deployPath,
+                    "deployId": formData.deployId,
+                    "deployType": formData.deployType,
+                    "startScript": formData.startScript
+                }
+            };
+            // 组装数据
+            $.ajax({
+                type: "PUT",
+                url: "${request.contextPath}/application/save",
+                data: JSON.stringify(param),
+                contentType: 'application/json',
+                success: function (data) {
+                    var message = "";
+                    if (data.success) {
+                        message = "保存成功";
+                    } else {
+                        message = data.message;
+                    }
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+<body class="childrenBody">
+<fieldset class="layui-elem-field layui-field-title" >
+    <legend>应用基本信息</legend>
+</fieldset>
+    <div class="layui-field-box">
+        <form class="layui-form" id="serviceForm">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">业务线</label>
+                    <div class="layui-input-inline">
+                        <select name="businessLineId" lay-filter="businessLine" id="businessLineId" lay-verify="required">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">服务</label>
+                    <div class="layui-input-inline">
+                        <select name="serviceId" lay-filter="serviceId" id="serviceId" lay-verify="required">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-inline" style="width: 300px;">
+                        <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">描述</label>
+                    <div class="layui-input-inline" style="width: 300px;">
+                        <input type="text" name="desc" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>仓库信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">仓库类型</label>
+                    <div class="layui-input-inline">
+                        <select name="repType" lay-filter="repType" id="repType" lay-verify="required">
+                            <option value="0">请选择</option>
+                            <option value="1">git</option>
+                            <option value="2">svn</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">仓库地址</label>
+                    <div class="layui-input-inline" style="width: 500px;">
+                        <input type="text" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="userName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-inline" style="width: 300px;">
+                        <input type="text" name="passWord" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>环境配置</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">环境名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="envName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">目标机器部署路径</label>
+                    <div class="layui-input-inline" style="width: 500px;">
+                        <input type="text" name="deployPath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-inline">
+                        <select name="deployType" lay-filter="deployType" id="deployType" lay-verify="required">
+                            <option value="0">请选择</option>
+                            <option value="1">服务器</option>
+                            <option value="2">集群</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">服务器/集群</label>
+                    <div class="layui-input-inline">
+                        <select name="deployId" lay-filter="deployId" id="deployId" lay-verify="required" lay-search="">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">启动脚本</label>
+                <div class="layui-input-block">
+                    <textarea  style="width: 600px;" name="startScript" placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

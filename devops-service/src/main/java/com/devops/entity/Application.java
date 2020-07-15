@@ -1,6 +1,7 @@
 package com.devops.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Table(name = "t_application")
 @Data
 @Entity
+@DynamicUpdate
 public class Application implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -24,11 +26,13 @@ public class Application implements Serializable {
     @Column(name = "`desc`")
     private String desc;
 
-    @Column(name = "business_line_id", nullable = false)
-    private Integer businessLineId;
+    @OneToOne
+    @JoinColumn(name = "business_line_id")
+    private BusinessLine businessLine;
 
-    @Column(name = "service_id", nullable = false)
-    private Integer serviceId;
+    @OneToOne
+    @JoinColumn(name = "service_id")
+    private Service service;
 
     @Column(name = "create_date", nullable = false)
     private Date createDate;

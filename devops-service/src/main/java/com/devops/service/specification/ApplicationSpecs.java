@@ -17,17 +17,13 @@ import com.devops.entity.Application;
 public class ApplicationSpecs {
 	
 	public static Specification<Application> getPage(ApplicationDto applicationDto){
-		return new Specification<Application>() {
-			@Override
-			public Predicate toPredicate(Root<Application> root, CriteriaQuery<?> query,
-					CriteriaBuilder criteriaBuilder) {
-				List<Predicate> predicate = new ArrayList<>();
-	            if (StringUtils.isNotBlank(applicationDto.getName())) {
-	                predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + applicationDto.getName() + "%"));
-	            }
-	            Predicate[] pre = new Predicate[predicate.size()];
-	            return query.where(predicate.toArray(pre)).getRestriction();
+		return (Specification<Application>) (root, query, criteriaBuilder) -> {
+			List<Predicate> predicate = new ArrayList<>();
+			if (StringUtils.isNotBlank(applicationDto.getName())) {
+				predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + applicationDto.getName() + "%"));
 			}
+			Predicate[] pre = new Predicate[predicate.size()];
+			return query.where(predicate.toArray(pre)).getRestriction();
 		};
 		
 		

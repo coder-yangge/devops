@@ -1,6 +1,5 @@
 package com.devops.web.form;
 
-import java.sql.Timestamp;
 
 import lombok.Data;
 
@@ -16,5 +15,9 @@ public class ApplicationFrom {
     private Integer businessLineId;
 
     private Integer serviceId;
+
+    private RepositoryForm repository;
+
+    private EnvironmentForm environment;
 
 }

@@ -55,4 +55,14 @@ public class PageController {
         modelMap.put("id", serviceId);
         return "/devops/service/serviceEdit";
     }
+
+    @GetMapping("/application/index")
+    public String application() {
+        return "/devops/application/application";
+    }
+
+    @GetMapping("/application/savePage")
+    public String applicationSavePage() {
+        return "/devops/application/applicationAdd";
+    }
 }
