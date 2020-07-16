@@ -32,7 +32,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("开始拦截请求 request url:{}, time:{}", request.getRequestURI(), LocalDateTime.now());
         HttpSession session = request.getSession();
         try {
             Account account = (Account) session.getAttribute(SESSION_ACCOUNT);
@@ -42,23 +41,24 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                     response.sendRedirect(request.getContextPath() + "/index.html");
                     return false;
                 }
+                log.info("开始拦截请求 request url:{}, time:{}", request.getRequestURI(), LocalDateTime.now());
                 throw new BizException("account.login.state.fail");
+            }
+            if (handler instanceof HandlerMethod) {
+                log.info("开始拦截请求 request url:{}, time:{}", request.getRequestURI(), LocalDateTime.now());
+                HandlerMethod handlerMethod = (HandlerMethod) handler;
+                Class<?> beanType = handlerMethod.getBeanType();
+                Method method = handlerMethod.getMethod();
+                if (beanType.isAnnotationPresent(NoLogin.class) || method.isAnnotationPresent(NoLogin.class)) {
+                    return true;
+                }
             }
             AccountContextHolder.putAccount(account);
         } catch (ClassCastException e) {
             e.printStackTrace();
             throw new BizException("account.login.state.fail");
         }
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-            Class<?> beanType = handlerMethod.getBeanType();
-            Method method = handlerMethod.getMethod();
-            if (beanType.isAnnotationPresent(NoLogin.class) || method.isAnnotationPresent(NoLogin.class)) {
-                return true;
-            }
-        } else {
 
-        }
         return true;
     }
 

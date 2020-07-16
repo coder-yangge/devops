@@ -15,4 +15,6 @@ public class SytemProperties {
 
     public static final String FILE_PATH = "/";
 
+    public static final String GIT_REMOTE_BRANCH_PRIX = "refs/remotes/origin/";
+
 }

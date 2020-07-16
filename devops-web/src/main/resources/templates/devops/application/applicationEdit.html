@@ -17,7 +17,6 @@
         var form = layui.form;
         layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery;
-
         form.render();
         form.verify({
 
@@ -65,23 +64,28 @@
                 }
             });
         });
+
+        var applicationId = ${data.id};
         form.on('submit(save)', function (data) {
             //弹出loading
             var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
             var dataString = JSON.stringify(data.field);
             var formData = JSON.parse(dataString);
             var param = {
+                "id": applicationId,
                 "name": formData.name,
                 "desc": formData.desc,
                 "businessLineId": formData.businessLineId,
                 "serviceId": formData.serviceId,
                 "repository": {
+                    "id": formData.repositoryId,
                     "type": formData.repType,
                     "address": formData.address,
                     "userName": formData.userName,
                     "passWord": formData.passWord
                 },
                 "environment": {
+                    "id": formData.environmentId,
                     "name": formData.envName,
                     "deployPath": formData.deployPath,
                     "deployId": formData.deployId,
@@ -94,8 +98,8 @@
             };
             // 组装数据
             $.ajax({
-                type: "PUT",
-                url: "${request.contextPath}/application/save",
+                type: "PATCH",
+                url: "${request.contextPath}/application/edit",
                 data: JSON.stringify(param),
                 contentType: 'application/json',
                 success: function (data) {
@@ -108,6 +112,15 @@
                     setTimeout(function(){
                         top.layer.close(index);
                         top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg("服务器异常");
                         layer.closeAll("iframe");
                         //刷新父页面
                         parent.location.reload();
@@ -166,10 +179,11 @@
                 <legend>仓库信息</legend>
             </fieldset>
             <div class="layui-form-item">
+                <input type="text" name="repositoryId" value="${data.repository.id}" hidden="hidden">
                 <div class="layui-inline">
                     <label class="layui-form-label">仓库类型</label>
                     <div class="layui-input-inline">
-                        <select name="repType" lay-filter="repType" id="repType" lay-verify="required">
+                        <select disabled name="repType" lay-filter="repType" id="repType" lay-verify="required">
                             <option value="0">请选择</option>
                             <option value="1" <#if (data.repository.type) == 1>selected</#if>>git</option>
                             <option value="2" <#if (data.repository.type) == 2>selected</#if>>svn</option>
@@ -179,7 +193,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">仓库地址</label>
                     <div class="layui-input-inline" style="width: 500px;">
-                        <input type="text" value="${data.repository.address}" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        <input type="text" disabled value="${data.repository.address}" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
                     </div>
                 </div>
             </div>
@@ -201,6 +215,7 @@
                 <legend>环境配置</legend>
             </fieldset>
             <div class="layui-form-item">
+                <input type="text" name="environmentId" value="${data.environment.id}" hidden="hidden">
                 <div class="layui-inline">
                     <label class="layui-form-label">环境名称</label>
                     <div class="layui-input-inline">
@@ -269,7 +284,7 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">启动脚本</label>
                 <div class="layui-input-block">
-                    <textarea  style="width: 600px;" value="${data.environment.startScript}" name="startScript" placeholder="请输入内容" class="layui-textarea"></textarea>
+                    <textarea  style="width: 600px;" name="startScript" placeholder="请输入内容" class="layui-textarea">${data.environment.startScript}</textarea>
                 </div>
             </div>
             <div class="layui-form-item">

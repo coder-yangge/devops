@@ -39,4 +39,8 @@ public interface ApplicationService {
 	 * @return
 	 */
 	List<ApplicationDto> getApplicationList();
+
+	void modifyApplication(ApplicationDto applicationDto);
+
+	boolean exist(String name);
 }

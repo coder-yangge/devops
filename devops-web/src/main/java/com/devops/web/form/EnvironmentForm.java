@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class EnvironmentForm {
 
+    private Integer id;
+
     private String name;
 
     private Integer deployType;

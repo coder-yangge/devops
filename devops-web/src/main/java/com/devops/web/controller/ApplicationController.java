@@ -2,6 +2,7 @@ package com.devops.web.controller;
 
 import com.devops.common.enums.DeployTypeEnum;
 import com.devops.dto.*;
+import com.devops.event.PullCodeEvent;
 import com.devops.service.BusinessLineService;
 import com.devops.service.ClusterService;
 import com.devops.service.Service;
@@ -10,6 +11,7 @@ import com.devops.web.vo.ApplicationVo;
 import com.devops.web.vo.ServiceApplicationVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +50,9 @@ public class ApplicationController {
 	@Autowired
 	private MachineService machineService;
 
+	@Autowired
+	private ApplicationEventMulticaster eventMulticaster;
+
 	@ResponseBody
 	@PostMapping("/page")
 	public ResponseVo<PageDTO<ApplicationDto>> getPage(@RequestBody ApplicationQueryForm queryFrom) {
@@ -62,24 +67,17 @@ public class ApplicationController {
 	@ResponseBody
 	@PutMapping("/save")
 	public ResponseVo<ApplicationDto> saveApplication(@RequestBody ApplicationFrom applicationFrom) {
-		ApplicationDto applicationDto = new ApplicationDto();
-		RepositoryDto repositoryDto = new RepositoryDto();
-		EnvironmentDto environmentDto = new EnvironmentDto();
-		BeanUtils.copyProperties(applicationFrom.getRepository(), repositoryDto);
-		BeanUtils.copyProperties(applicationFrom, applicationDto);
-		BeanUtils.copyProperties(applicationFrom.getEnvironment(), environmentDto);
-		applicationDto.setRepository(repositoryDto);
-		applicationDto.setEnvironment(environmentDto);
+		ApplicationDto applicationDto = convert(applicationFrom);
 		applicationService.saveApplicationDto(applicationDto);
+		eventMulticaster.multicastEvent(new PullCodeEvent(applicationDto));
 		return ResponseBuilder.buildSuccess();
 	}
 
 	@ResponseBody
 	@PatchMapping("/edit")
 	public ResponseVo<ApplicationDto> editApplication(@RequestBody ApplicationFrom applicationFrom) {
-		ApplicationDto applicationDto = new ApplicationDto();
-		BeanUtils.copyProperties(applicationFrom, applicationDto);
-		applicationService.saveApplicationDto(applicationDto);
+		ApplicationDto applicationDto = convert(applicationFrom);
+		applicationService.modifyApplication(applicationDto);
 		return ResponseBuilder.buildSuccess();
 	}
 
@@ -140,5 +138,19 @@ public class ApplicationController {
 		modelMap.put("businessLineList", businessLineDTOList);
 		modelMap.put("serviceList", serviceDTOS);
 		return "devops/application/applicationEdit";
+	}
+
+	private ApplicationDto convert(ApplicationFrom applicationFrom) {
+		ApplicationDto applicationDto = new ApplicationDto();
+		RepositoryDto repositoryDto = new RepositoryDto();
+		EnvironmentDto environmentDto = new EnvironmentDto();
+		BeanUtils.copyProperties(applicationFrom.getRepository(), repositoryDto);
+		BeanUtils.copyProperties(applicationFrom, applicationDto);
+		BeanUtils.copyProperties(applicationFrom.getEnvironment(), environmentDto);
+		applicationDto.setRepository(repositoryDto);
+		applicationDto.setEnvironment(environmentDto);
+		repositoryDto.setApplicationId(applicationDto.getId());
+		environmentDto.setApplicationId(applicationDto.getId());
+		return applicationDto;
 	}
 }

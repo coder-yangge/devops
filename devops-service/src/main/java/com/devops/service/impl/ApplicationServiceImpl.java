@@ -14,6 +14,7 @@ import com.devops.entity.Repository;
 import com.devops.repository.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,9 +63,11 @@ public class ApplicationServiceImpl implements ApplicationService{
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void saveApplicationDto(ApplicationDto applicationDto) {
+		if (this.exist(applicationDto.getName())) {
+			throw new BizException("应用已存在");
+		}
 		Application application = new Application();
 		BeanUtils.copyProperties(applicationDto, application);
-		application.setCreateDate(new Date());
 		Optional<com.devops.entity.Service> optionalService = serviceRepository.findById(applicationDto.getServiceId());
 		Optional<BusinessLine> optionalBusinessLine = businessLineRepository.findById(applicationDto.getBusinessLineId());
 		if (!optionalService.isPresent()) {
@@ -75,6 +78,7 @@ public class ApplicationServiceImpl implements ApplicationService{
 		}
 		application.setBusinessLine(optionalBusinessLine.get());
 		application.setService(optionalService.get());
+		application.setCreateDate(new Date());
 		Application entity = applicationRepository.save(application);
 		RepositoryDto repositoryDto = applicationDto.getRepository();
 		Repository repository = new Repository();
@@ -118,6 +122,54 @@ public class ApplicationServiceImpl implements ApplicationService{
 		List<ApplicationDto> dtoList = new ArrayList<>();
 		convert(applicationList, dtoList, true);
 		return dtoList;
+	}
+
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void modifyApplication(ApplicationDto applicationDto) {
+		Application application = new Application();
+		if (this.exist(applicationDto.getName())) {
+			throw new BizException("应用已存在");
+		}
+		Optional<com.devops.entity.Service> optionalService = serviceRepository.findById(applicationDto.getServiceId());
+		Optional<BusinessLine> optionalBusinessLine = businessLineRepository.findById(applicationDto.getBusinessLineId());
+		Optional<Environment> optionalEnvironment = environmentRepository.findById(applicationDto.getEnvironment().getId());
+		Optional<Repository> repositoryOptional = repositoryRepository.findById(applicationDto.getRepository().getId());
+		if (!optionalService.isPresent()) {
+			throw new BizException("服务不存在");
+		}
+		if (!optionalBusinessLine.isPresent()) {
+			throw new BizException("业务线不存在");
+		}
+		if (!optionalEnvironment.isPresent()) {
+			throw new BizException("环境不存在");
+		}
+		if (!repositoryOptional.isPresent()) {
+			throw new BizException("仓库不存在");
+		}
+		Repository repository = new Repository();
+		Environment environment = new Environment();
+		RepositoryDto repositoryDto = applicationDto.getRepository();
+		BeanUtils.copyProperties(applicationDto, application);
+		BeanUtils.copyProperties(repositoryDto, repository);
+		BeanUtils.copyProperties(applicationDto.getEnvironment(), environment);
+		application.setBusinessLine(optionalBusinessLine.get());
+		application.setService(optionalService.get());
+		application.setCreateDate(new Date());
+		repository.setCreateDate(Timestamp.from(Instant.now()));
+		environment.setCreateDate(Timestamp.from(Instant.now()));
+		applicationRepository.save(application);
+		repositoryRepository.save(repository);
+		environmentRepository.save(environment);
+	}
+
+	@Override
+	public boolean exist(String name) {
+		Application application = new Application();
+		application.setName(name);
+		List<Application> list = applicationRepository.findAll(Example.of(application));
+		return !CollectionUtils.isEmpty(list);
 	}
 
 	private void convert(Application application, ApplicationDto applicationDto, boolean deep) {

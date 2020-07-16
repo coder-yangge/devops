@@ -39,7 +39,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        show_sql: true
+        show_sql: false
         format_sql: true
     database: mysql
 
@@ -47,3 +47,7 @@ spring:
 logging:
   level:
     org.springframework.web: info
+
+application:
+  clone:
+    location: D:/develop/software/JAVA/Iproject/application/

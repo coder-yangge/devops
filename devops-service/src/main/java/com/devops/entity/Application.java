@@ -11,7 +11,6 @@ import java.util.Date;
 @Table(name = "t_application")
 @Data
 @Entity
-@DynamicUpdate
 public class Application implements Serializable {
     private static final long serialVersionUID = 1L;
 

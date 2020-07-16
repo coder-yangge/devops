@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 @Table(name = "t_package_record")
 @Entity
@@ -36,5 +37,7 @@ public class PackageRecord implements Serializable {
     @Column(name = "status", nullable = false)
     private String status;
 
-    
+    @Column(name = "create_date", nullable = false)
+    private Date createDate;
+
 }
