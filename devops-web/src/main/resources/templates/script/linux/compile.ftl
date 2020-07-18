@@ -1,0 +1,1 @@
+cd ${filePath} && ${packageCommand} ${packageArg}

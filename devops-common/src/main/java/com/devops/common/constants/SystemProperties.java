@@ -7,7 +7,7 @@ package com.devops.common.constants;
  * @description: TODO
  * @date 2020/7/13 15:53
  */
-public class SytemProperties {
+public class SystemProperties {
 
     public static final String LINE =  System.getProperty("line.separator");
 
@@ -16,5 +16,13 @@ public class SytemProperties {
     public static final String FILE_PATH = "/";
 
     public static final String GIT_REMOTE_BRANCH_PRIX = "refs/remotes/origin/";
+
+    public static final String COMPILE_LOG_TOPIC = "/queue/compile/log";
+
+    public static String OS;
+
+    static {
+        OS = System.getProperty("os.name").toLowerCase();
+    }
 
 }

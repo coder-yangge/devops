@@ -1,6 +1,6 @@
 package com.devops.common.ssh;
 
-import com.devops.common.constants.SytemProperties;
+import com.devops.common.constants.SystemProperties;
 import com.jcraft.jsch.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -164,8 +164,8 @@ public class SSHClient {
         session = createSession();
 
         ChannelSftp sftpChannel = createSftpChannel(session);
-        String dst = remoteDir + SytemProperties.FILE_PATH + fileName;
-        String src = filePath + SytemProperties.FILE_PATH + fileName;
+        String dst = remoteDir + SystemProperties.FILE_PATH + fileName;
+        String src = filePath + SystemProperties.FILE_PATH + fileName;
         if (!exist(remoteDir, sftpChannel)) {
             log.error("目标服务器路径[{}]不存在", remoteDir);
         }

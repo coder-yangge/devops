@@ -75,5 +75,10 @@ public class ResponseVo<T> {
 
             return buildSuccess(200, "", true, null);
         }
+
+        public static ResponseVo buildFailed(){
+
+            return buildSuccess(500, "", false, null);
+        }
     }
 }

@@ -1,0 +1,1 @@
+cmd /k D: && cd ${filePath} && ${packageCommand} ${packageArg} && exit

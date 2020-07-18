@@ -129,9 +129,9 @@ public class ApplicationServiceImpl implements ApplicationService{
 	@Override
 	public void modifyApplication(ApplicationDto applicationDto) {
 		Application application = new Application();
-		if (this.exist(applicationDto.getName())) {
+	/*	if (this.exist(applicationDto.getName())) {
 			throw new BizException("应用已存在");
-		}
+		}*/
 		Optional<com.devops.entity.Service> optionalService = serviceRepository.findById(applicationDto.getServiceId());
 		Optional<BusinessLine> optionalBusinessLine = businessLineRepository.findById(applicationDto.getBusinessLineId());
 		Optional<Environment> optionalEnvironment = environmentRepository.findById(applicationDto.getEnvironment().getId());

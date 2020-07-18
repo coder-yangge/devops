@@ -45,6 +45,13 @@ public class GitClient {
         return call.isSuccessful();
     }
 
+    public PullResult pullLog(GitProperties properties) throws IOException, GitAPIException {
+
+        PullResult call = Git.open(new File(localPath + properties.getAppName())).pull()
+                .setCredentialsProvider(provider(properties)).call();
+        return call;
+    }
+
     public boolean checkOutBranch(GitProperties properties, String branch) throws IOException, GitAPIException {
         Git git = Git.open(new File(localPath + properties.getAppName()));
         String localBranch = git.getRepository().getBranch();

@@ -16,16 +16,18 @@ public class AccountContextHolder {
 
     private static final String ACCOUNT_KEY = "accountKey";
 
+    public static final String WEB_SOCKET_SESSION_KEY = "webSocketSessionIdKey";
+
     private static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
-    public static void put(String key, Account account) {
-        if (ObjectUtils.isNotEmpty(account)) {
+    public static void put(String key, Object object) {
+        if (ObjectUtils.isNotEmpty(object)) {
             Map<String, Object> attribute = threadLocal.get();
             if (CollectionUtils.isEmpty(attribute)) {
                 attribute = new HashMap<>();
                 threadLocal.set(attribute);
             }
-            attribute.put(key, account);
+            attribute.put(key, object);
         }
     }
 
@@ -41,4 +43,5 @@ public class AccountContextHolder {
     public static void putAccount(Account account) {
         put(ACCOUNT_KEY, account);
     }
+
 }

@@ -18,4 +18,6 @@ public class Account implements Serializable {
     private String passWord;
 
     private String userId;
+
+    private String webSocketSessionId;
 }
