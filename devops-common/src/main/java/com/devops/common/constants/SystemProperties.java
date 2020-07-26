@@ -4,7 +4,7 @@ package com.devops.common.constants;
  * @author yangge
  * @version 1.0.0
  * @title: SytemProperties
- * @description: TODO
+ * @description: 系统常量
  * @date 2020/7/13 15:53
  */
 public class SystemProperties {

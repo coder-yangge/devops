@@ -2,6 +2,7 @@ package com.devops.web.listener;
 
 import com.devops.common.acount.Account;
 import com.devops.common.constants.SystemProperties;
+import com.devops.common.enums.BuildStatusEnum;
 import com.devops.common.enums.SystemOS;
 import com.devops.common.properties.GitProperties;
 import com.devops.common.util.GitClient;
@@ -184,16 +185,17 @@ public class ApplicationEventListener {
         record.setBranch(buildDTO.getBranch());
         record.setName(buildDTO.getRemark());
         record.setCreateDate(new Date());
-        record.setStatus(success ? String.valueOf(1) : String.valueOf(2));
+        record.setStatus(BuildStatusEnum.FAILED.getCode());
         String packagePath = environment.getPackagePath();
         String localPath = gitClient.getLocalPath() + applicationDto.getName();
-        if (!packagePath.startsWith("/")) {
-            packagePath = "/" + packagePath ;
+        if (!packagePath.startsWith(SystemProperties.FILE_PATH)) {
+            packagePath = SystemProperties.FILE_PATH + packagePath ;
         }
         if (success) {
             FileInputStream inputStream = new FileInputStream(localPath + packagePath);
             String md5Hex = DigestUtils.md5Hex(inputStream);
             record.setVersion(md5Hex);
+            record.setStatus(BuildStatusEnum.SUCCESS.getCode());
             inputStream.close();
         }
         recordRepository.save(record);
