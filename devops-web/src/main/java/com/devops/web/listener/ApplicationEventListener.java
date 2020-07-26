@@ -5,14 +5,18 @@ import com.devops.common.constants.SystemProperties;
 import com.devops.common.enums.SystemOS;
 import com.devops.common.properties.GitProperties;
 import com.devops.common.util.GitClient;
+import com.devops.dto.ApplicationDto;
 import com.devops.dto.BuildDTO;
 import com.devops.dto.EnvironmentDto;
 import com.devops.dto.RepositoryDto;
+import com.devops.entity.PackageRecord;
 import com.devops.event.CompileEvent;
 import com.devops.event.PullCodeEvent;
+import com.devops.repository.PackageRecordRepository;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -25,6 +29,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +51,9 @@ public class ApplicationEventListener {
 
     @Autowired
     private FreeMarkerConfigurer freemarker;
+
+    @Autowired
+    private PackageRecordRepository recordRepository;
 
     @Async
     @EventListener
@@ -86,6 +94,7 @@ public class ApplicationEventListener {
             pushCompileLog(account.getUserName(), "暂不支持当前操作系统");
         }
         String exception = null;
+        boolean success = false;
         try {
             pushCompileLog(account.getUserName(), "开始切换分支" + buildDTO.getBranch());
             gitClient.checkOutBranch(gitProperties, buildDTO.getBranch());
@@ -114,6 +123,7 @@ public class ApplicationEventListener {
                 }
                 ps.destroy();
                 ps = null;
+                success = true;
             } else {
                 pushCompileLog(account.getUserName(), "远程获取失败");
             }
@@ -135,6 +145,13 @@ public class ApplicationEventListener {
             pushCompileLog(account.getUserName(), "构建失败");
         }
         pushCompileLog(account.getUserName(), "构建成功");
+        // 保存构建记录
+        try {
+            this.savePackageRecord(event, success);
+        } catch (IOException e) {
+            pushCompileLog(account.getUserName(), "保存构建记录失败");
+            log.error("保存构建记录失败：{}", e.getMessage());
+        }
     }
 
     private void pushCompileLog(String user, String message) {
@@ -156,5 +173,29 @@ public class ApplicationEventListener {
         gitProperties.setUserName(userName);
         gitProperties.setPassWord(passWord);
         return gitProperties;
+    }
+
+    private void savePackageRecord(CompileEvent event, boolean success) throws IOException {
+        ApplicationDto applicationDto = event.getApplicationDto();
+        BuildDTO buildDTO = event.getBuildDTO();
+        EnvironmentDto environment = applicationDto.getEnvironment();
+        PackageRecord record = new PackageRecord();
+        record.setApplicationId(buildDTO.getApplicationId());
+        record.setBranch(buildDTO.getBranch());
+        record.setName(buildDTO.getRemark());
+        record.setCreateDate(new Date());
+        record.setStatus(success ? String.valueOf(1) : String.valueOf(2));
+        String packagePath = environment.getPackagePath();
+        String localPath = gitClient.getLocalPath() + applicationDto.getName();
+        if (!packagePath.startsWith("/")) {
+            packagePath = "/" + packagePath ;
+        }
+        if (success) {
+            FileInputStream inputStream = new FileInputStream(localPath + packagePath);
+            String md5Hex = DigestUtils.md5Hex(inputStream);
+            record.setVersion(md5Hex);
+            inputStream.close();
+        }
+        recordRepository.save(record);
     }
 }

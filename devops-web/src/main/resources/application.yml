@@ -42,6 +42,11 @@ spring:
         show_sql: false
         format_sql: true
     database: mysql
+  task:
+    execution:
+      pool:
+        max-size: 10
+      thread-name-prefix: async-service-
 
 
 logging:
