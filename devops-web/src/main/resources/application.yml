@@ -56,3 +56,5 @@ logging:
 application:
   clone:
     location: D:/develop/software/JAVA/Iproject/application/
+  package:
+    save-location: D:/develop/software/JAVA/Iproject/localRepository

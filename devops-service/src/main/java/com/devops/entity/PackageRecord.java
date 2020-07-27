@@ -38,4 +38,7 @@ public class PackageRecord implements Serializable {
     @Column(name = "create_date", nullable = false)
     private Date createDate;
 
+    @Column(name = "create_user")
+    private String createUser;
+
 }

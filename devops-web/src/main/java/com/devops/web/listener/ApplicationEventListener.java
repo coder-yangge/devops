@@ -18,8 +18,10 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -56,6 +58,9 @@ public class ApplicationEventListener {
     @Autowired
     private PackageRecordRepository recordRepository;
 
+    @Value("${application.package.save-location}")
+    private String packageSaveLocation;
+
     @Async
     @EventListener
     public void cloneRepositoryEvent(PullCodeEvent event) {
@@ -78,6 +83,11 @@ public class ApplicationEventListener {
         }
     }
 
+    /**
+     * 构建事件
+     * TODO 应用构建时，为防止多个用户构建同一个应用，此处应该添加分布式锁，当获取锁失败时，直接提示构建失败
+     * @param event CompileEvent
+     */
     @Async("asyncServiceExecutor")
     @EventListener
     public void compileEvent(CompileEvent event) {
@@ -186,17 +196,27 @@ public class ApplicationEventListener {
         record.setName(buildDTO.getRemark());
         record.setCreateDate(new Date());
         record.setStatus(BuildStatusEnum.FAILED.getCode());
+        record.setCreateUser(event.getAccount().getUserName());
         String packagePath = environment.getPackagePath();
         String localPath = gitClient.getLocalPath() + applicationDto.getName();
         if (!packagePath.startsWith(SystemProperties.FILE_PATH)) {
             packagePath = SystemProperties.FILE_PATH + packagePath ;
         }
         if (success) {
-            FileInputStream inputStream = new FileInputStream(localPath + packagePath);
+            File file = new File(localPath + packagePath);
+            log.info("{} package file path: {}", applicationDto.getName(), file.getAbsolutePath());
+            FileInputStream inputStream = new FileInputStream(file);
             String md5Hex = DigestUtils.md5Hex(inputStream);
             record.setVersion(md5Hex);
             record.setStatus(BuildStatusEnum.SUCCESS.getCode());
             inputStream.close();
+            String saveLocation = packageSaveLocation + applicationDto.getName() + md5Hex;
+            File copyFile = new File(saveLocation + SystemProperties.FILE_PATH + file.getName());
+            FileOutputStream outputStream = new FileOutputStream(copyFile);
+            FileInputStream read = new FileInputStream(file);
+            IOUtils.copy(read, outputStream);
+            read.close();
+            outputStream.close();
         }
         recordRepository.save(record);
     }
