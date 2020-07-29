@@ -125,7 +125,7 @@ public class BuildController {
         eventMulticaster.multicastEvent(event);
         log.info("发送消息user[{}] topic[{}] 内容[{}]", account.getUserName(), "/queue/compile/log", "test");
         messagingTemplate.convertAndSendToUser(account.getUserName(), "/queue/compile/log", "test");
-        return ResponseVo.ResponseBuilder.buildFailed();
+        return ResponseVo.ResponseBuilder.buildSuccess();
     }
 
 }

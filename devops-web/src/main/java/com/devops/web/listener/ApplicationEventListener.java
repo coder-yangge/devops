@@ -210,13 +210,17 @@ public class ApplicationEventListener {
             record.setVersion(md5Hex);
             record.setStatus(BuildStatusEnum.SUCCESS.getCode());
             inputStream.close();
-            String saveLocation = packageSaveLocation + applicationDto.getName() + md5Hex;
-            File copyFile = new File(saveLocation + SystemProperties.FILE_PATH + file.getName());
-            FileOutputStream outputStream = new FileOutputStream(copyFile);
+            String saveLocation = packageSaveLocation + SystemProperties.FILE_PATH + applicationDto.getName() + SystemProperties.FILE_PATH + md5Hex;
+            File copyFile = new File(saveLocation);
+            if (!copyFile.exists()) {
+                copyFile.mkdirs();
+            }
+            FileOutputStream outputStream = new FileOutputStream(saveLocation + SystemProperties.FILE_PATH + file.getName());
             FileInputStream read = new FileInputStream(file);
             IOUtils.copy(read, outputStream);
             read.close();
             outputStream.close();
+            record.setFilePath(saveLocation + SystemProperties.FILE_PATH + file.getName());
         }
         recordRepository.save(record);
     }

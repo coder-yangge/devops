@@ -51,7 +51,7 @@
     {
       "title": "构建记录",
       "icon": "&#xe60a;",
-      "href": "page/user/userList.html",
+      "href": "package/record/index",
       "spread": false
     }
   ],

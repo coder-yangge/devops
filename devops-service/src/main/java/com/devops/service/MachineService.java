@@ -1,4 +1,4 @@
-package com.devops.service.impl;
+package com.devops.service;
 
 import com.devops.common.dto.PageDTO;
 import com.devops.dto.MachineDTO;

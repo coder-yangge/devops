@@ -6,7 +6,7 @@ import com.devops.event.PullCodeEvent;
 import com.devops.service.BusinessLineService;
 import com.devops.service.ClusterService;
 import com.devops.service.Service;
-import com.devops.service.impl.MachineService;
+import com.devops.service.MachineService;
 import com.devops.web.vo.ApplicationVo;
 import com.devops.web.vo.ServiceApplicationVo;
 import org.springframework.beans.BeanUtils;

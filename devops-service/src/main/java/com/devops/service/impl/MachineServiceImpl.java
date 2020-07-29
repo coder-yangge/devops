@@ -4,6 +4,7 @@ import com.devops.common.dto.PageDTO;
 import com.devops.dto.MachineDTO;
 import com.devops.entity.Machine;
 import com.devops.repository.MachineRepository;
+import com.devops.service.MachineService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

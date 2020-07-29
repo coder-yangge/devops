@@ -41,4 +41,6 @@ public class PackageRecord implements Serializable {
     @Column(name = "create_user")
     private String createUser;
 
+    @Column(name = "file_path", nullable = false)
+    private String filePath;
 }

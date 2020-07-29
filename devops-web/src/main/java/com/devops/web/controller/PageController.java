@@ -66,4 +66,9 @@ public class PageController {
         return "/devops/application/applicationAdd";
     }
 
+    @GetMapping("/package/record/index")
+    public String packageRecord() {
+        return "/devops/record/packageRecord";
+    }
+
 }

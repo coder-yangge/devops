@@ -1,11 +1,10 @@
 package com.devops.web.controller;
 
 import com.devops.dto.MachineDTO;
-import com.devops.service.impl.MachineService;
+import com.devops.service.MachineService;
 import com.devops.web.common.vo.ResponseVo;
 import com.devops.web.vo.MachineVo;
 import io.swagger.annotations.Api;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

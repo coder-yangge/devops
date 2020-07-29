@@ -75,7 +75,7 @@ public class SSHClient {
         return channel;
     }
 
-    private Session createSession() throws JSchException, IOException, InterruptedException {
+    private Session createSession() throws JSchException {
         JSch jSch = new JSch();
         final Session session = jSch.getSession(username, hostname, port);
         session.setPassword(password);
@@ -159,22 +159,34 @@ public class SSHClient {
         return status;
     }
 
-    public void upload(String remoteDir, String fileName, String filePath, PrintStream printStream) throws InterruptedException, JSchException, IOException, SftpException {
+    public void upload(String remoteDir, String fileName, String filePath, PrintStream printStream) throws InterruptedException {
         Session session = null;
-        session = createSession();
-
-        ChannelSftp sftpChannel = createSftpChannel(session);
-        String dst = remoteDir + SystemProperties.FILE_PATH + fileName;
-        String src = filePath + SystemProperties.FILE_PATH + fileName;
-        if (!exist(remoteDir, sftpChannel)) {
-            log.error("目标服务器路径[{}]不存在", remoteDir);
-        }
-        log.info("开始上传，本地服务器路径：[{}]目标服务器路径：[{}]", src, dst);
-        sftpChannel.put(src, dst);
-        sftpChannel.disconnect();
-        sftpChannel.exit();
-        if (session != null && session.isConnected()) {
-            session.disconnect();
+        ChannelSftp sftpChannel = null;
+        try {
+            session = createSession();
+            sftpChannel = createSftpChannel(session);
+            String dst = remoteDir + SystemProperties.FILE_PATH + fileName;
+            String src = filePath + SystemProperties.FILE_PATH + fileName;
+            if (!exist(remoteDir, sftpChannel)) {
+                log.error("目标服务器路径[{}]不存在", remoteDir);
+                // 不存在是否创建目录
+                log.info("开始创建路径[{}]", remoteDir);
+                sftpChannel.mkdir(remoteDir);
+            }
+            log.info("开始上传，本地服务器路径：[{}]目标服务器路径：[{}]", src, dst);
+            sftpChannel.put(src, dst);
+        } catch (JSchException e) {
+            e.printStackTrace();
+        } catch (SftpException e) {
+            e.printStackTrace();
+        } finally {
+            if (sftpChannel != null && sftpChannel.isConnected()) {
+                sftpChannel.disconnect();
+                sftpChannel.exit();
+            }
+            if (session != null && session.isConnected()) {
+                session.disconnect();
+            }
         }
     }
 
