@@ -33,6 +33,38 @@
     }();
     $(function (){
         var table = layui.table;
+        var form = layui.form;
+        $.ajax({
+            url: '${request.contextPath}/business/line/query',
+            type: 'get',
+            async: false,
+            success: function (data) {
+                $.each(data.data, function (index, item) {
+                    $('#businessLineId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                });
+            }
+        });
+        form.on('select(businessLine)', function(data){
+            var businessLineId = data.value; //得到被选中的值
+            $('#serviceId').empty();
+            if (businessLineId == 0) {
+                form.render();
+                return;
+            }
+            $.ajax({
+                url: '${request.contextPath}/service/businessLine/query/' + businessLineId,
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    $('#serviceId').append(new Option("请选择", ""));
+                    $.each(data.data, function (index, item) {
+                        $('#serviceId').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                    });
+                    form.render();
+                }
+            });
+        });
+        form.render();
         table.render({
             elem: '#application'
             ,url:'${request.contextPath}/application/page'
@@ -179,13 +211,29 @@
             <form class="layui-form" id="applicationForm">
                 <div class="layui-form-item">
                     <div class="layui-inline">
+                        <label class="layui-form-label">业务线</label>
+                        <div class="layui-input-inline">
+                            <select name="businessLineId" lay-filter="businessLine" id="businessLineId">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">服务</label>
+                        <div class="layui-input-inline">
+                            <select name="serviceId" lay-filter="serviceId" id="serviceId">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label class="layui-form-label">应用名称</label>
-                        <div class="layui-input-inline" style="width: 300px;">
+                        <div class="layui-input-inline" style="max-width: 300px;">
                             <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <div class="layui-input-inline" style="width: 300px;">
+                        <div class="layui-input-inline" style="max-width: 300px;">
                             <button lay-submit="" lay-filter="query" class="layui-btn">查询</button>
                         </div>
                     </div>

@@ -8,4 +8,8 @@ import lombok.Data;
 public class ApplicationQueryForm extends PageForm{
 	
 	private String name;
+
+	private Integer businessLineId;
+
+	private Integer serviceId;
 }

@@ -5,6 +5,7 @@ import com.devops.common.acount.AccountContextHolder;
 import com.devops.common.exception.BizException;
 import com.devops.web.common.interceptor.AuthorizationInterceptor;
 import com.devops.web.common.vo.ResponseVo;
+import com.devops.web.form.LoginForm;
 import com.devops.web.form.SimpleMessageForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,18 +37,18 @@ public class TestController {
     @Autowired
     private HttpServletResponse response;
 
-    @GetMapping("/account/login")
-    public ResponseVo<String> login(String userName, String password) throws Exception {
-        log.info("username:{}, password:{}", userName, password);
-        if (StringUtils.isBlank(userName)) {
+    @PostMapping("/account/login")
+    public ResponseVo<String> login(@RequestBody LoginForm loginForm) throws Exception {
+        log.info("username:{}, password:{}", loginForm.getUserName(), loginForm.getPassword());
+        if (StringUtils.isBlank(loginForm.getPassword())) {
             throw new BizException("account.login.state.fail");
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         HttpSession session = request.getSession();
         Account account = new Account();
-        account.setUserName(userName);
-        account.setPassWord(password);
+        account.setUserName(loginForm.getUserName());
+        account.setPassWord(loginForm.getPassword());
         account.setUserId("1");
         session.setAttribute(AuthorizationInterceptor.SESSION_ACCOUNT, account);
         Cookie cookie = new Cookie("SESSION-ACCOUNT-TEST", UUID.randomUUID().toString().toUpperCase());
@@ -56,7 +57,7 @@ public class TestController {
         cookie.setSecure(false);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
-        return new ResponseVo<>("success");
+        return ResponseVo.ResponseBuilder.buildSuccess();
     }
 
     @Autowired

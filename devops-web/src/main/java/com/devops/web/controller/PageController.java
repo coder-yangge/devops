@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+
 /**
  * @author yangge
  * @version 1.0.0
@@ -19,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PageController {
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index() {
         return "index";
     }
@@ -70,5 +75,17 @@ public class PageController {
     public String packageRecord() {
         return "/devops/record/packageRecord";
     }
+
+    @GetMapping("/account/loginOut")
+    public void loginOut(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        session.removeAttribute("sessionAccount");
+        session.invalidate();
+        try {
+            response.sendRedirect(request.getContextPath() + "/page/login/login.html");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

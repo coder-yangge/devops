@@ -14,4 +14,6 @@ public interface PackageRecordService {
     PageDTO<PackageRecordDTO> getPackageRecordPage(PageDTO pageDTO);
 
     void deleteRecord(Integer recordId);
+
+    PackageRecordDTO getById(Integer recordId);
 }

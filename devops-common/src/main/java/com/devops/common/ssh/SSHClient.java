@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * @author yangge
@@ -160,21 +162,35 @@ public class SSHClient {
     }
 
     public void upload(String remoteDir, String fileName, String filePath, PrintStream printStream) throws InterruptedException {
+        upload(remoteDir, fileName, ()-> filePath);
+    }
+
+    public void upload(String remoteDir, String fileName, InputStream inputStream, PrintStream printStream) throws InterruptedException {
+        upload(remoteDir, fileName, ()-> inputStream);
+    }
+
+    private <T> void upload(String remoteDir, String fileName, Supplier<T> supplier) throws InterruptedException {
         Session session = null;
         ChannelSftp sftpChannel = null;
         try {
             session = createSession();
             sftpChannel = createSftpChannel(session);
             String dst = remoteDir + SystemProperties.FILE_PATH + fileName;
-            String src = filePath + SystemProperties.FILE_PATH + fileName;
             if (!exist(remoteDir, sftpChannel)) {
                 log.error("目标服务器路径[{}]不存在", remoteDir);
                 // 不存在是否创建目录
                 log.info("开始创建路径[{}]", remoteDir);
                 sftpChannel.mkdir(remoteDir);
             }
-            log.info("开始上传，本地服务器路径：[{}]目标服务器路径：[{}]", src, dst);
-            sftpChannel.put(src, dst);
+            T t = supplier.get();
+            if (t instanceof String) {
+                log.info("开始上传，本地服务器路径：[{}]目标服务器路径：[{}]", t, dst);
+                sftpChannel.put((String)t, dst);
+            }
+            if (t instanceof InputStream) {
+                log.info("开始上传，目标服务器路径：[{}]", dst);
+                sftpChannel.put((InputStream)t, dst);
+            }
         } catch (JSchException e) {
             e.printStackTrace();
         } catch (SftpException e) {
@@ -230,7 +246,7 @@ public class SSHClient {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sshClient.upload("/home/test", "壁纸1.jpg", "D:\\娱乐\\壁纸", null);
+        sshClient.upload("/", "壁纸1.jpg", "D:\\娱乐\\壁纸\\壁纸1.jpg", null);
 
         System.out.println("success");
     }

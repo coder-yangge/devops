@@ -1,6 +1,5 @@
 package com.devops.service.impl;
 
-import com.devops.common.constants.SystemProperties;
 import com.devops.common.dto.PageDTO;
 import com.devops.common.exception.BizException;
 import com.devops.dto.PackageRecordDTO;
@@ -17,8 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,7 +46,20 @@ public class PackageRecordServiceImpl implements PackageRecordService {
     public PageDTO<PackageRecordDTO> getPackageRecordPage(PageDTO pageDTO) {
         Pageable pageable = PageRequest.of(pageDTO.getPageNum() -1, pageDTO.getPageSize());
         Page<PackageRecord> recordPage = packageRecordRepository.findAll(pageable);
-        return PageDTO.of(recordPage, PackageRecordDTO::new, BeanUtils::copyProperties);
+        List<PackageRecord> content = recordPage.getContent();
+        List<PackageRecordDTO> dtoList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(content)) {
+            content.forEach(e ->{
+                PackageRecordDTO dto = new PackageRecordDTO();
+                BeanUtils.copyProperties(e, dto);
+                Optional<Application> applicationOptional = applicationRepository.findById(e.getApplicationId());
+                if (applicationOptional.isPresent()) {
+                    dto.setApplicationName(applicationOptional.get().getName());
+                }
+                dtoList.add(dto);
+            });
+        }
+        return PageDTO.of(recordPage, dtoList);
     }
 
     @Override
@@ -70,5 +85,16 @@ public class PackageRecordServiceImpl implements PackageRecordService {
         } else {
             log.info("删除应用ID[{}]构建记录ID[{}]的部署包路径为[{}]失败，文件不存在", applicationId, id, filePath);
         }
+    }
+
+    @Override
+    public PackageRecordDTO getById(Integer recordId) {
+        Optional<PackageRecord> recordOptional = packageRecordRepository.findById(recordId);
+        if (!recordOptional.isPresent()) {
+            return null;
+        }
+        PackageRecordDTO dto = new PackageRecordDTO();
+        BeanUtils.copyProperties(recordOptional.get(), dto);
+        return dto;
     }
 }

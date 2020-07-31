@@ -14,4 +14,6 @@ import lombok.Data;
 public class ServiceQueryForm extends PageForm {
 
     private String name;
+
+    private Integer businessLineId;
 }

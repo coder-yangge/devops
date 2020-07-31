@@ -88,7 +88,7 @@ public class ApplicationEventListener {
      * TODO 应用构建时，为防止多个用户构建同一个应用，此处应该添加分布式锁，当获取锁失败时，直接提示构建失败
      * @param event CompileEvent
      */
-    @Async("asyncServiceExecutor")
+    @Async("asyncCompileThreadPool")
     @EventListener
     public void compileEvent(CompileEvent event) {
         log.info("开始构建");

@@ -36,22 +36,22 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         try {
             Account account = (Account) session.getAttribute(SESSION_ACCOUNT);
             if (ObjectUtils.isEmpty(account)) {
-                if (handler instanceof ResourceHttpRequestHandler) {
-                    // 未登录 跳转到登录界面
-                    response.sendRedirect(request.getContextPath() + "/index.html");
+                log.info("开始拦截请求 request url:{}, time:{}", request.getRequestURI(), LocalDateTime.now());
+                if (request.getRequestURI().endsWith("/devops/error")) {
                     return false;
                 }
-                log.info("开始拦截请求 request url:{}, time:{}", request.getRequestURI(), LocalDateTime.now());
-                throw new BizException("account.login.state.fail");
-            }
-            if (handler instanceof HandlerMethod) {
-                log.info("开始拦截请求 request url:{}, time:{}", request.getRequestURI(), LocalDateTime.now());
-                HandlerMethod handlerMethod = (HandlerMethod) handler;
-                Class<?> beanType = handlerMethod.getBeanType();
-                Method method = handlerMethod.getMethod();
-                if (beanType.isAnnotationPresent(NoLogin.class) || method.isAnnotationPresent(NoLogin.class)) {
-                    return true;
+                if (handler instanceof HandlerMethod) {
+                    HandlerMethod handlerMethod = (HandlerMethod) handler;
+                    Class<?> beanType = handlerMethod.getBeanType();
+                    Method method = handlerMethod.getMethod();
+                    if (beanType.isAnnotationPresent(NoLogin.class) || method.isAnnotationPresent(NoLogin.class)) {
+                        return true;
+                    }
                 }
+                // 未登录 跳转到登录界面
+                response.sendRedirect(request.getContextPath() + "/page/login/login.html");
+                return false;
+                // throw new BizException("account.login.state.fail");
             }
             AccountContextHolder.putAccount(account);
         } catch (ClassCastException e) {
