@@ -42,7 +42,7 @@ public class CommonDeployHandler implements DeployHandler {
     @Autowired
     private Configuration configuration;
 
-   // @Async("asyncCompileThreadPool")
+    @Async("asyncCompileThreadPool")
     @Override
     public void deployApp(DeployDTO deployDTO) {
         ApplicationDto applicationDto = deployDTO.getApplicationDto();
@@ -101,6 +101,9 @@ public class CommonDeployHandler implements DeployHandler {
             e.printStackTrace();
         } catch (TemplateException e) {
             e.printStackTrace();
+        } finally {
+            // TODO 删除启动脚本
+
         }
     }
 }
