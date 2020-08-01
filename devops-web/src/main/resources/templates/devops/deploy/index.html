@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>应用构建</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
+</head>
+<script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
+<script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
+<script type="text/javascript">
+    ;!function(){
+        //监听导航点击
+        var applicationId = null;
+        var layer = layui.layer
+        var form = layui.form;
+        var element = layui.element;
+        element.on('nav(service)', function(elem){
+            var application = $(elem).attr("application");
+            if (application == undefined) {
+                return;
+            }
+            applicationId = application;
+            $('#branch').empty();
+            $.ajax({
+                url: '${request.contextPath}/build/application/evn/' + application,
+                type: 'get',
+                success: function (data) {
+                    if (data.success) {
+                        $.each(data.data, function (index, item) {
+                            $('#branch').append(new Option(item, item));// 下拉菜单里添加元素
+                        });
+                        form.render();
+                    } else {
+                        layer.msg(data.message);
+                    }
+                }
+            });
+        });
+        form.on('submit(deploy)', function (data) {
+            if (applicationId == null || applicationId == undefined || applicationId == "") {
+                layer.msg("请选择一个应用");
+                return false;
+            }
+            return false;
+        });
+    }();
+
+    $(function (){
+        var element = layui.element;
+        var form = layui.form;
+        element.render();
+        form.render();
+    });
+
+    function buildPage(content){
+        var index = layui.layer.open({
+            title : "构建",
+            type : 2,
+            content : content,
+            success : function(layero, index){
+                setTimeout(function(){
+                    layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                },500)
+            }
+        });
+        layui.layer.full(index);
+        window.sessionStorage.setItem("index",index);
+        //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+        $(window).on("resize",function(){
+            layui.layer.full(window.sessionStorage.getItem("index"));
+        });
+    }
+</script>
+<body class="childrenBody">
+<div class="table-list roll-x">
+    <div class="layui-side layui-bg-black">
+        <ul class="layui-nav layui-nav-tree" lay-filter="service">
+            <#list data as service>
+            <#assign applicationList=service.applicationList />
+            <li class="layui-nav-item">
+                <a href="javascript:;">${service.name}</a>
+                <dl class="layui-nav-child">
+                    <#if applicationList??>
+                    <#list applicationList as application>
+                    <dd><a href="javascript:;" application="${application.id}">${application.name}</a></dd>
+                </#list>
+            </#if>
+            </dl>
+            </li>
+        </#list>
+        </ul>
+    </div>
+    <div class="layui-body">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>发布信息</legend>
+        </fieldset>
+        <div>
+            <form class="layui-form" id="buildForm" lay-filter="form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">应用名称</label>
+                        <div class="layui-input-inline" style="max-width: 500px;">
+                            <input  disabled type="text" name="applicationName" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">环境</label>
+                        <div class="layui-input-inline" style="max-width: 500px;">
+                            <select name="env" lay-filter="branch" id="env" lay-verify="required">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">构建版本</label>
+                        <div class="layui-input-inline" style="max-width: 500px;">
+                            <input  disabled type="text" name="version" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-inline" style="max-width: 500px;">
+                            <input type="text" name="remark" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button lay-submit="" lay-filter="build" class="layui-btn layui-btn-normal">开始构建</button>
+                        <button class="layui-btn layui-btn-primary">取消</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

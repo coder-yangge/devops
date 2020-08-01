@@ -136,34 +136,38 @@
     <div class="layui-field-box">
         <form class="layui-form" id="serviceForm">
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">业务线</label>
-                    <div class="layui-input-inline">
-                        <select name="businessLineId" lay-filter="businessLine" id="businessLineId" lay-verify="required">
-                            <option value="0">请选择</option>
-                        </select>
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">业务线</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="businessLineId" lay-filter="businessLine" id="businessLineId" lay-verify="required">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">服务</label>
-                    <div class="layui-input-inline">
-                        <select name="serviceId" lay-filter="serviceId" id="serviceId" lay-verify="required">
-                            <option value="0">请选择</option>
-                        </select>
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">服务</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="serviceId" lay-filter="serviceId" id="serviceId" lay-verify="required">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">名称</label>
-                    <div class="layui-input-inline" style="max-width: 300px;">
-                        <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">描述</label>
-                    <div class="layui-input-inline" style="max-width: 500px;">
-                        <input type="text" name="desc" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">描述</label>
+                        <div class="layui-input-block" style="max-width: 500px;">
+                            <input type="text" name="desc" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -171,34 +175,38 @@
                 <legend>仓库信息</legend>
             </fieldset>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">仓库类型</label>
-                    <div class="layui-input-inline">
-                        <select name="repType" lay-filter="repType" id="repType" lay-verify="required">
-                            <option value="0">请选择</option>
-                            <option value="1">git</option>
-                            <option value="2">svn</option>
-                        </select>
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">仓库类型</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="repType" lay-filter="repType" id="repType" lay-verify="required">
+                                <option value="0">请选择</option>
+                                <option value="1">git</option>
+                                <option value="2">svn</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">仓库地址</label>
-                    <div class="layui-input-inline" style="max-width: 500px;">
-                        <input type="text" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">仓库地址</label>
+                        <div class="layui-input-block" style="max-width: 500px;">
+                            <input type="text" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="userName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="userName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">密码</label>
-                    <div class="layui-input-inline" style="max-width: 300px;">
-                        <input type="text" name="passWord" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="passWord" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -206,58 +214,66 @@
                 <legend>环境配置</legend>
             </fieldset>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">环境名称</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="envName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">环境名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="envName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">目标机器部署路径</label>
-                    <div class="layui-input-inline" style="max-width: 500px;">
-                        <input type="text" name="deployPath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">类型</label>
-                    <div class="layui-input-inline">
-                        <select name="deployType" lay-filter="deployType" id="deployType" lay-verify="required">
-                            <option value="0">请选择</option>
-                            <option value="1">服务器</option>
-                            <option value="2">集群</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">服务器/集群</label>
-                    <div class="layui-input-inline">
-                        <select name="deployId" lay-filter="deployId" id="deployId" lay-verify="required" lay-search="">
-                            <option value="0">请选择</option>
-                        </select>
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">目标机器部署路径</label>
+                        <div class="layui-input-block" style="max-width: 500px;">
+                            <input type="text" name="deployPath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">构建命令</label>
-                    <div class="layui-input-inline" style="max-width: 300px;">
-                        <input type="text" value="mvn clean package -DskipTests"  name="packageCommand" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="deployType" lay-filter="deployType" id="deployType" lay-verify="required">
+                                <option value="0">请选择</option>
+                                <option value="1">服务器</option>
+                                <option value="2">集群</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">构建参数</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="packageArg" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">服务器/集群</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="deployId" lay-filter="deployId" id="deployId" lay-verify="required" lay-search="">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">包路径</label>
-                    <div class="layui-input-inline" style="max-width:500px;">
-                        <input type="text" name="packagePath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">构建命令</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="mvn clean package -DskipTests"  name="packageCommand" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">构建参数</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="packageArg" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-row">
+                    <div class="layui-col-xs8">
+                        <label class="layui-form-label">包路径</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="packagePath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>

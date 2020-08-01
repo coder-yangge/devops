@@ -1,16 +1,13 @@
 package com.devops.handler;
 
 import com.devops.common.constants.SystemProperties;
-import com.devops.common.exception.BizException;
 import com.devops.common.ssh.SSHClient;
 import com.devops.dto.ApplicationDto;
 import com.devops.dto.DeployDTO;
 import com.devops.dto.MachineDTO;
 import com.devops.dto.PackageRecordDTO;
-import com.devops.entity.PackageRecord;
 import com.devops.service.MachineService;
 import com.devops.service.PackageRecordService;
-import freemarker.core.ParseException;
 import freemarker.template.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -68,10 +65,10 @@ public class CommonDeployHandler implements DeployHandler {
             return;
         }
         SSHClient sshClient = new SSHClient(ip, sshUserName, sshPassword, timeout, serverAliveInterval);
-        log.info("机器【{}】部署包【{}】上传成功", ip, filePath);
         try {
             // 上传至目标服务器
             sshClient.upload(SystemProperties.FILE_PATH + sshUserName, fileName, filePath, null);
+            log.info("机器【{}】部署包【{}】上传成功", ip, filePath);
             // 执行启动脚本
             log.info("机器【{}】准备上传启动脚本【{}】", ip, applicationDto.getEnvironment().getStartScript());
             Template template = configuration.getTemplate("/script/linux/start_script.ftl");
