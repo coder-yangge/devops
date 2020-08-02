@@ -138,40 +138,44 @@
     <div class="layui-field-box">
         <form class="layui-form" id="serviceForm">
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">业务线</label>
-                    <div class="layui-input-inline">
-                        <select name="businessLineId" lay-filter="businessLine" id="businessLineId" lay-verify="required">
-                            <option value="0">请选择</option>
-                            <#list businessLineList as businessLine>
-                                <option value="${businessLine.id}" <#if (businessLine.id) == (data.businessLineId)>selected</#if>>${businessLine.name}</option>
-                            </#list>
-                        </select>
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">业务线</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="businessLineId" lay-filter="businessLine" id="businessLineId" lay-verify="required">
+                                <option value="0">请选择</option>
+                                <#list businessLineList as businessLine>
+                                    <option value="${businessLine.id}" <#if (businessLine.id) == (data.businessLineId)>selected</#if>>${businessLine.name}</option>
+                                </#list>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">服务</label>
-                    <div class="layui-input-inline">
-                        <select name="serviceId" lay-filter="serviceId" id="serviceId" lay-verify="required">
-                            <option value="0">请选择</option>
-                            <#list serviceList as service>
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">服务</label>
+                        <div class="layui-input-block">
+                            <select name="serviceId" lay-filter="serviceId" id="serviceId" lay-verify="required">
+                                <option value="0">请选择</option>
+                                <#list serviceList as service>
                                 <option value="${service.id}" <#if (service.id) == (data.serviceId)>selected</#if>>${service.name}</option>
-                            </#list>
-                        </select>
+                                </#list>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">名称</label>
-                    <div class="layui-input-inline" style="width: 300px;">
-                        <input type="text" value="${data.name}" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.name}" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">描述</label>
-                    <div class="layui-input-inline" style="width: 300px;">
-                        <input type="text" value="${data.desc}" name="desc" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">描述</label>
+                        <div class="layui-input-block" style="max-width: 500px;">
+                            <input type="text" value="${data.desc}" name="desc" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -180,34 +184,38 @@
             </fieldset>
             <div class="layui-form-item">
                 <input type="text" name="repositoryId" value="${data.repository.id}" hidden="hidden">
-                <div class="layui-inline">
-                    <label class="layui-form-label">仓库类型</label>
-                    <div class="layui-input-inline">
-                        <select disabled name="repType" lay-filter="repType" id="repType" lay-verify="required">
-                            <option value="0">请选择</option>
-                            <option value="1" <#if (data.repository.type) == 1>selected</#if>>git</option>
-                            <option value="2" <#if (data.repository.type) == 2>selected</#if>>svn</option>
-                        </select>
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">仓库类型</label>
+                        <div class="layui-input-block">
+                            <select disabled name="repType" lay-filter="repType" id="repType" lay-verify="required">
+                                <option value="0">请选择</option>
+                                <option value="1" <#if (data.repository.type) == 1>selected</#if>>git</option>
+                                <option value="2" <#if (data.repository.type) == 2>selected</#if>>svn</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">仓库地址</label>
-                    <div class="layui-input-inline" style="width: 500px;">
-                        <input type="text" disabled value="${data.repository.address}" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">仓库地址</label>
+                        <div class="layui-input-block" style="max-width: 500px;">
+                            <input type="text" disabled value="${data.repository.address}" name="address" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" value="${data.repository.userName}" name="userName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.repository.userName}" name="userName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">密码</label>
-                    <div class="layui-input-inline" style="width: 300px;">
-                        <input type="text" value="${data.repository.passWord}" name="passWord" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.repository.passWord}" name="passWord" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,75 +224,83 @@
             </fieldset>
             <div class="layui-form-item">
                 <input type="text" name="environmentId" value="${data.environment.id}" hidden="hidden">
-                <div class="layui-inline">
-                    <label class="layui-form-label">环境名称</label>
-                    <div class="layui-input-inline">
-                        <input type="text" value="${data.environment.name}" name="envName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">环境名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.environment.name}" name="envName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">目标机器部署路径</label>
-                    <div class="layui-input-inline" style="width: 500px;">
-                        <input type="text" value="${data.environment.deployPath}" name="deployPath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">类型</label>
-                    <div class="layui-input-inline">
-                        <select name="deployType" lay-filter="deployType" id="deployType" lay-verify="required">
-                            <option value="0">请选择</option>
-                            <option value="1" <#if (data.environment.deployType) == 1>selected</#if>>服务器</option>
-                            <option value="2" <#if (data.environment.deployType) == 2>selected</#if>>集群</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">服务器/集群</label>
-                    <div class="layui-input-inline">
-                        <select name="deployId" lay-filter="deployId" id="deployId" lay-verify="required" lay-search="">
-                            <option value="0">请选择</option>
-                            <#if machineList??>
-                                <#list machineList as machine>
-                                    <option value="${machine.id}" <#if (machine.id) == (data.environment.deployId)>selected</#if>>${machine.name}</option>
-                                </#list>
-                            </#if>
-                            <#if clusterList??>
-                                <#list clusterList as cluster>
-                                    <option value="${cluster.id}" <#if (cluster.id) == (data.environment.deployId)>selected</#if>>${cluster.name}</option>
-                                </#list>
-                            </#if>
-                        </select>
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">目标机器部署路径</label>
+                        <div class="layui-input-block" style="max-width: 500px;">
+                            <input type="text" value="${data.environment.deployPath}" name="deployPath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">构建命令</label>
-                    <div class="layui-input-inline">
-                        <input type="text" value="${data.environment.packageCommand}" name="packageCommand" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="deployType" lay-filter="deployType" id="deployType" lay-verify="required">
+                                <option value="0">请选择</option>
+                                <option value="1" <#if (data.environment.deployType) == 1>selected</#if>>服务器</option>
+                                <option value="2" <#if (data.environment.deployType) == 2>selected</#if>>集群</option>
+                            </select>
+                        </div>
                     </div>
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">服务器/集群</label>
+                        <div class="layui-input-block" style="max-width: 200px;">
+                            <select name="deployId" lay-filter="deployId" id="deployId" lay-verify="required" lay-search="">
+                                <option value="0">请选择</option>
+                                <#if machineList??>
+                                    <#list machineList as machine>
+                                        <option value="${machine.id}" <#if (machine.id) == (data.environment.deployId)>selected</#if>>${machine.name}</option>
+                                    </#list>
+                                </#if>
+                                <#if clusterList??>
+                                    <#list clusterList as cluster>
+                                        <option value="${cluster.id}" <#if (cluster.id) == (data.environment.deployId)>selected</#if>>${cluster.name}</option>
+                                    </#list>
+                                </#if>
+                            </select>
+                        </div>
+                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">构建参数</label>
-                    <div class="layui-input-inline">
-                        <input type="text" value="${data.environment.packageArg}" name="packageArg" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-row">
+                    <div class="layui-col-xs4">
+                        <label class="layui-form-label">构建命令</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.environment.packageCommand}" name="packageCommand" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <label class="layui-form-label">构建参数</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.environment.packageArg}" name="packageArg" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">包路径</label>
-                    <div class="layui-input-inline">
-                        <input type="text" value="${data.environment.packagePath}" name="packagePath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-row">
+                    <div class="layui-col-xs8">
+                        <label class="layui-form-label">包路径</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${data.environment.packagePath}" name="packagePath" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">启动脚本</label>
                 <div class="layui-input-block">
-                    <textarea  style="width: 600px;" name="startScript" placeholder="请输入内容" class="layui-textarea">${data.environment.startScript}</textarea>
+                    <textarea  style="max-width: 600px;" name="startScript" placeholder="请输入内容" class="layui-textarea">${data.environment.startScript}</textarea>
                 </div>
             </div>
             <div class="layui-form-item">

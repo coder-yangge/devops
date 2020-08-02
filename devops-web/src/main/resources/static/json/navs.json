@@ -57,14 +57,15 @@
   ],
   "systemeSttings": [
     {
+      "title": "立即发布",
+      "icon": "&#xe67c;",
+      "href": "application/deploy/index",
+      "spread": false
+    },
+    {
       "title": "系统基本参数",
       "icon": "&#xe631;",
       "href": "page/systemSetting/basicParameter.html",
-      "spread": false
-    },{
-      "title": "系统日志",
-      "icon": "icon-log",
-      "href": "page/systemSetting/logs.html",
       "spread": false
     },{
       "title": "友情链接",

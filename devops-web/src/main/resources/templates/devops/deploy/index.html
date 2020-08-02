@@ -104,44 +104,53 @@
             <legend>发布信息</legend>
         </fieldset>
         <div>
-            <form class="layui-form" id="buildForm" lay-filter="form">
+            <form class="layui-form" id="deployForm" lay-filter="form">
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">应用名称</label>
-                        <div class="layui-input-inline" style="max-width: 500px;">
-                            <input  disabled type="text" name="applicationName" lay-verify="required" autocomplete="off" class="layui-input">
+                    <div class="layui-row">
+                        <div class="layui-col-xs6">
+                            <label class="layui-form-label">应用名称</label>
+                            <div class="layui-input-block" style="max-width: 500px;">
+                                <input  disabled type="text" name="applicationName" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">环境</label>
-                        <div class="layui-input-inline" style="max-width: 500px;">
-                            <select name="env" lay-filter="branch" id="env" lay-verify="required">
-                                <option value="">请选择</option>
-                            </select>
+                    <div class="layui-row">
+                        <div class="layui-col-xs6">
+                            <label class="layui-form-label">环境</label>
+                            <div class="layui-input-block" style="max-width: 500px;">
+                                <select name="env" lay-filter="branch" id="env" lay-verify="required">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">构建版本</label>
-                        <div class="layui-input-inline" style="max-width: 500px;">
-                            <input  disabled type="text" name="version" lay-verify="required" autocomplete="off" class="layui-input">
+                    <div class="layui-row">
+                        <div class="layui-col-xs6">
+                            <label class="layui-form-label">构建版本</label>
+                            <div class="layui-input-block" style="max-width: 500px;">
+                                <input  disabled type="text" name="deployId" lay-verify="required" autocomplete="off" class="layui-input">
+                                <a class="layui-btn layui-btn-normal">请选择</a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">备注</label>
-                        <div class="layui-input-inline" style="max-width: 500px;">
-                            <input type="text" name="remark" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <div class="layui-row">
+                        <div class="layui-col-xs6">
+                            <label class="layui-form-label">备注</label>
+                            <div class="layui-input-block" style="max-width: 500px;">
+                                <input type="text" name="remark" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button lay-submit="" lay-filter="build" class="layui-btn layui-btn-normal">开始构建</button>
+                        <button lay-submit="" lay-filter="build" class="layui-btn layui-btn-normal">发布</button>
                         <button class="layui-btn layui-btn-primary">取消</button>
                     </div>
                 </div>

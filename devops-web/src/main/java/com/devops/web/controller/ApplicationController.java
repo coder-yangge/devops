@@ -97,28 +97,17 @@ public class ApplicationController {
 
 	@GetMapping("/build/index")
 	public String build(ModelMap modelMap) {
-		List<ApplicationDto> applicationDtoList = applicationService.getApplicationList();
-		Map<Integer, List<ApplicationDto>> listMap = applicationDtoList.stream().collect(Collectors.groupingBy(ApplicationDto::getServiceId));
-		List<ServiceApplicationVo> applicationVoList = new ArrayList<>();
-		listMap.forEach((serviceId, dtoList)->{
-			ApplicationDto dto = dtoList.get(0);
-			List<ApplicationVo> applicationList = new ArrayList<>();
-			dtoList.forEach(e ->{
-				ApplicationVo vo = new ApplicationVo();
-				vo.setId(e.getId());
-				vo.setName(e.getName());
-				applicationList.add(vo);
-			});
-			ServiceApplicationVo vo = new ServiceApplicationVo();
-			vo.setId(serviceId);
-			vo.setName(dto.getServiceName());
-			vo.setApplicationList(applicationList);
-			applicationVoList.add(vo);
-		});
-		modelMap.put("data", applicationVoList);
+		List<ServiceApplicationVo> applications = getApplications();
+		modelMap.put("data", applications);
 		return "devops/build/index";
 	}
 
+	@GetMapping("/deploy/index")
+	public String deploy(ModelMap modelMap) {
+		List<ServiceApplicationVo> applications = getApplications();
+		modelMap.put("data", applications);
+		return "/devops/deploy/index";
+	}
 
 	@GetMapping("/edit/page/{applicationId}")
 	public String build(@PathVariable("applicationId") Integer applicationId, ModelMap modelMap) {
@@ -138,6 +127,28 @@ public class ApplicationController {
 		modelMap.put("businessLineList", businessLineDTOList);
 		modelMap.put("serviceList", serviceDTOS);
 		return "devops/application/applicationEdit";
+	}
+
+	private List<ServiceApplicationVo> getApplications() {
+		List<ApplicationDto> applicationDtoList = applicationService.getApplicationList();
+		Map<Integer, List<ApplicationDto>> listMap = applicationDtoList.stream().collect(Collectors.groupingBy(ApplicationDto::getServiceId));
+		List<ServiceApplicationVo> applicationVoList = new ArrayList<>();
+		listMap.forEach((serviceId, dtoList)->{
+			ApplicationDto dto = dtoList.get(0);
+			List<ApplicationVo> applicationList = new ArrayList<>();
+			dtoList.forEach(e ->{
+				ApplicationVo vo = new ApplicationVo();
+				vo.setId(e.getId());
+				vo.setName(e.getName());
+				applicationList.add(vo);
+			});
+			ServiceApplicationVo vo = new ServiceApplicationVo();
+			vo.setId(serviceId);
+			vo.setName(dto.getServiceName());
+			vo.setApplicationList(applicationList);
+			applicationVoList.add(vo);
+		});
+		return applicationVoList;
 	}
 
 	private ApplicationDto convert(ApplicationFrom applicationFrom) {
