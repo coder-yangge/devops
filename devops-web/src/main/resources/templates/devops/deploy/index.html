@@ -11,30 +11,34 @@
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
     <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
+    <link href="${request.contextPath}/css/step.css" rel="stylesheet">
 </head>
 <script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
 <script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
 <script type="text/javascript">
+    var applicationId = null;
     ;!function(){
         //监听导航点击
-        var applicationId = null;
         var layer = layui.layer
         var form = layui.form;
         var element = layui.element;
+        var table = layui.table;
         element.on('nav(service)', function(elem){
             var application = $(elem).attr("application");
             if (application == undefined) {
                 return;
             }
             applicationId = application;
-            $('#branch').empty();
+            var applicationName = elem.text();
+            $("#applicationName").attr("value", applicationName);
+            $('#env').empty();
             $.ajax({
-                url: '${request.contextPath}/build/application/evn/' + application,
+                url: '${request.contextPath}/deploy/application/evn/' + application,
                 type: 'get',
                 success: function (data) {
                     if (data.success) {
                         $.each(data.data, function (index, item) {
-                            $('#branch').append(new Option(item, item));// 下拉菜单里添加元素
+                            $('#env').append(new Option(item, item));// 下拉菜单里添加元素
                         });
                         form.render();
                     } else {
@@ -48,6 +52,7 @@
                 layer.msg("请选择一个应用");
                 return false;
             }
+            layer.alert(JSON.stringify(data));
             return false;
         });
     }();
@@ -55,8 +60,105 @@
     $(function (){
         var element = layui.element;
         var form = layui.form;
+        $ = layui.jquery;
         element.render();
         form.render();
+        $("#versionButton").click(function () {
+            if (applicationId == null || applicationId == undefined || applicationId == "") {
+                layer.msg("请选择一个应用");
+                return false;
+            }
+            layer.open({
+                type: 1,
+                title: "构建列表",
+                skin: 'layui-layer-molv',
+                area: ['80%', '80%'],
+                content: $("#tableDiv"),
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                yes: function(index, layero){
+                    var checkStatus = table.checkStatus('packageRecord');
+                    if (checkStatus.data.length > 1) {
+                        layer.msg("目前暂支持选中一行");
+                        return;
+                    }
+                    var version = checkStatus.data[0].version;
+                    $("#deployId").attr("value", version);
+                    layer.close(index);
+                },
+                btn2: function(index, layero){
+                    layer.close(index);
+                },
+                cancel: function(index, layero){
+                    layer.close(index);
+                }
+            });
+            var table = layui.table;
+            table.render({
+                elem: '#packageRecord'
+                ,url:'${request.contextPath}/package/record/page'
+                ,hight:380
+                ,method: 'post'
+                /*,where: {
+                    ""
+                }*/
+                ,contentType: 'application/json'
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.data.total, //解析数据长度
+                        "data": res.data.data //解析数据列表
+                    };
+                }
+                ,request: {
+                    pageName: 'pageNum' //页码的参数名称，默认：page
+                    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                }
+                ,response: {
+                    statusCode: 200
+                }
+                ,cols: [[
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field:'id', align: 'center', title: '构建ID', sort: true}
+                    ,{field:'applicationName',  title: '应用名称' , align: 'center'}
+                    ,{field:'version', title: '版本', align: 'center'}
+                    ,{field:'name', title: '备注', sort: true, align: 'center'}
+                    ,{field:'branch',  title: '分支' , align: 'center'}
+                    ,{field:'createUser', title: '创建人', align: 'center'}
+                    ,{field:'createDate', title: '创建时间', align: 'center'}
+                ]]
+                ,page: true
+            });
+            //监听行单击事件（双击事件为：rowDouble）
+            table.on('row(packageRecord)', function(obj){
+                var data = obj.data;
+                //标注选中样式
+                //obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
+        });
+        $(document).on("click",".layui-table-body table.layui-table tbody tr", function () {
+            var index = $(this).attr('data-index');
+            var tableBox = $(this).parents('.layui-table-box');
+            //存在固定列
+            if (tableBox.find(".layui-table-fixed.layui-table-fixed-l").length>0) {
+                tableDiv = tableBox.find(".layui-table-fixed.layui-table-fixed-l");
+            } else {
+                tableDiv = tableBox.find(".layui-table-body.layui-table-main");
+            }
+            var checkCell = tableDiv.find("tr[data-index=" + index + "]").find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if (checkCell.length>0) {
+                checkCell.click();
+            }
+            //选中背景色
+            $(this).siblings().css("background-color", "#FFFFFF");
+            $(this).css("background-color", "#F2F2F2");
+        });
+
+        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+            e.stopPropagation();
+        });
+
     });
 
     function buildPage(content){
@@ -104,59 +206,62 @@
             <legend>发布信息</legend>
         </fieldset>
         <div>
-            <form class="layui-form" id="deployForm" lay-filter="form">
-                <div class="layui-form-item">
-                    <div class="layui-row">
-                        <div class="layui-col-xs6">
-                            <label class="layui-form-label">应用名称</label>
-                            <div class="layui-input-block" style="max-width: 500px;">
-                                <input  disabled type="text" name="applicationName" lay-verify="required" autocomplete="off" class="layui-input">
+                    <form class="layui-form" id="stepForm" lay-filter="stepForm">
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs6">
+                                    <label class="layui-form-label">应用名称</label>
+                                    <div class="layui-input-block" style="max-width: 500px;">
+                                        <input  disabled="disabled" id="applicationName" type="text" name="applicationName" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-row">
-                        <div class="layui-col-xs6">
-                            <label class="layui-form-label">环境</label>
-                            <div class="layui-input-block" style="max-width: 500px;">
-                                <select name="env" lay-filter="branch" id="env" lay-verify="required">
-                                    <option value="">请选择</option>
-                                </select>
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs6">
+                                    <label class="layui-form-label">环境</label>
+                                    <div class="layui-input-block" style="max-width: 500px;">
+                                        <select name="env" lay-filter="env" id="env" lay-verify="required">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-row">
-                        <div class="layui-col-xs6">
-                            <label class="layui-form-label">构建版本</label>
-                            <div class="layui-input-block" style="max-width: 500px;">
-                                <input  disabled type="text" name="deployId" lay-verify="required" autocomplete="off" class="layui-input">
-                                <a class="layui-btn layui-btn-normal">请选择</a>
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs6">
+                                    <label class="layui-form-label">构建版本</label>
+                                    <div class="layui-input-block" style="max-width: 500px;">
+                                        <input  disabled type="text" id="deployId" name="deployId" lay-verify="required" autocomplete="off" class="layui-input">
+                                        <a id="versionButton" class="layui-btn layui-btn-normal">请选择</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-row">
-                        <div class="layui-col-xs6">
-                            <label class="layui-form-label">备注</label>
-                            <div class="layui-input-block" style="max-width: 500px;">
-                                <input type="text" name="remark" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs6">
+                                    <label class="layui-form-label">备注</label>
+                                    <div class="layui-input-block" style="max-width: 500px;">
+                                        <input type="text" name="remark" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button lay-submit="" lay-filter="build" class="layui-btn layui-btn-normal">发布</button>
-                        <button class="layui-btn layui-btn-primary">取消</button>
-                    </div>
-                </div>
-            </form>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button lay-submit="" lay-filter="deploy" class="layui-btn layui-btn-normal">发布</button>
+                                <button class="layui-btn layui-btn-primary">取消</button>
+                            </div>
+                        </div>
+                    </form>
         </div>
     </div>
 </div>
 </body>
+<div class="layui-row" id="tableDiv" style="display:none;">
+<table class="layui-table" id="packageRecord" lay-filter="packageRecord"></table>
+</div>
 </html>

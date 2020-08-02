@@ -12,9 +12,12 @@ import com.devops.service.ApplicationService;
 import com.devops.service.MachineService;
 import com.devops.service.PackageRecordService;
 import com.devops.web.common.vo.ResponseVo;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author yangge
@@ -34,6 +37,14 @@ public class DeployController {
 
     @Autowired
     private DeployHandler deployHandler;
+
+    @GetMapping("/application/evn/{applicationId}")
+    public ResponseVo<List<String>> applicationEnvList(@PathVariable("applicationId") Integer applicationId) {
+        ApplicationDto applicationDto = applicationService.findById(applicationId);
+        // TODO 多环境改进
+        String name = applicationDto.getEnvironment().getName();
+        return ResponseVo.ResponseBuilder.buildSuccess(Lists.newArrayList(name));
+    }
 
     @PostMapping("/{applicationId}/{env}/{packageRecordId}")
     public ResponseVo deploy(@PathVariable("applicationId") Integer applicationId,
