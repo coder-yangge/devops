@@ -20,24 +20,24 @@
     },
 
     {
-      "title": "其他页面",
+      "title": "集群管理",
       "icon": "&#xe630;",
       "href": "",
       "spread": false,
       "children": [
         {
-          "title": "404页面",
-          "icon": "&#xe61c;",
-          "href": "page/404.html",
+          "title": "服务器",
+          "icon": "&#xe621;",
+          "href": "machine/index",
           "spread": false
         },
         {
-          "title": "登录",
-          "icon": "&#xe609;",
-          "href": "page/login/login.html",
-          "spread": false,
-          "target": "_blank"
+          "title": "集群",
+          "icon": "&#xe60a",
+          "href": "cluster/index",
+          "spread": false
         }
+
       ]
     }
   ],
@@ -60,22 +60,6 @@
       "title": "立即发布",
       "icon": "&#xe67c;",
       "href": "application/deploy/index",
-      "spread": false
-    },
-    {
-      "title": "系统基本参数",
-      "icon": "&#xe631;",
-      "href": "page/systemSetting/basicParameter.html",
-      "spread": false
-    },{
-      "title": "友情链接",
-      "icon": "&#xe64c;",
-      "href": "page/systemSetting/linkList.html",
-      "spread": false
-    },{
-      "title": "图标管理",
-      "icon": "&#xe857;",
-      "href": "page/systemSetting/icons.html",
       "spread": false
     }
   ],

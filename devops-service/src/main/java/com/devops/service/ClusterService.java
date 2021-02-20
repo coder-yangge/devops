@@ -16,4 +16,12 @@ public interface ClusterService {
     PageDTO<ClusterDTO> getPage(ClusterDTO clusterDTO, PageDTO pageDTO);
 
     List<ClusterDTO> getClusterList();
+
+    void save(ClusterDTO clusterDTO);
+
+    void delete(Integer id);
+
+    ClusterDTO getById(Integer id);
+
+    void updateCluster(ClusterDTO clusterDTO);
 }

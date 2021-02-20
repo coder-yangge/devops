@@ -20,4 +20,6 @@ public interface MachineService {
     MachineDTO getById(Integer id);
 
     List<MachineDTO> getMachineList();
+
+    void delete(Integer id);
 }

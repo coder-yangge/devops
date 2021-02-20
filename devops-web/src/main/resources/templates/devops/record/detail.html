@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
+</head>
+<script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
+<script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
+<script type="text/javascript">
+    ;!function(){
+        var layer = layui.layer
+            ,form = layui.form;
+    }();
+
+    $(function (){
+        var form = layui.form;
+        layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
+        $.ajax({
+            type: "GET",
+            url: "${request.contextPath}/package/record/${id}",
+            contentType: 'application/json',
+            async: false,
+            success: function (data) {
+                if (data.success) {
+                    form.val('form', {
+                        "applicationName": data.data.applicationName
+                        ,"version": data.data.version
+                        ,"branch": data.data.branch
+                        ,"createUser": data.data.createUser
+                        ,"createDate": data.data.createDate
+                        ,"name": data.data.name
+                    });
+                    form.render();
+                } else {
+                    layer.msg(data.message, {icon: 1});
+                }
+            }
+        });
+
+    });
+
+
+</script>
+<body class="childrenBody">
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">收起</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" id="buildForm" lay-filter="form">
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs5">
+                                    <label class="layui-form-label">应用名称</label>
+                                    <div class="layui-input-block">
+                                        <input  disabled type="text" name="applicationName" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-col-xs5">
+                                    <label class="layui-form-label">版本</label>
+                                    <div class="layui-input-block">
+                                        <input disabled type="text" name="version" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs5">
+                                    <label class="layui-form-label">备注</label>
+                                    <div class="layui-input-block">
+                                        <input disabled type="text" name="name" placeholder="" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-col-xs5">
+                                    <label class="layui-form-label">分支</label>
+                                    <div class="layui-input-block">
+                                        <input disabled type="text" name="branch" placeholder="" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-row">
+                                <div class="layui-col-xs5">
+                                    <label class="layui-form-label">创建人</label>
+                                    <div class="layui-input-block">
+                                        <input disabled type="text" name="createUser" placeholder="" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-col-xs5">
+                                    <label class="layui-form-label">创建时间</label>
+                                    <div class="layui-input-block">
+                                        <input disabled type="text" name="createDate" placeholder="" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

@@ -1,10 +1,12 @@
 package com.devops.service.impl;
 
 import com.devops.common.dto.PageDTO;
+import com.devops.common.exception.BizException;
 import com.devops.dto.MachineDTO;
 import com.devops.entity.Machine;
 import com.devops.repository.MachineRepository;
 import com.devops.service.MachineService;
+import com.devops.service.specification.MachineSpces;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +43,8 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public PageDTO<MachineDTO> getByPage(MachineDTO machineDTO, PageDTO pageDTO) {
-        Machine query = new Machine();
-        if (StringUtils.isNotBlank(machineDTO.getName())) {
-            query.setName(machineDTO.getName());
-        }
-        if (StringUtils.isNotBlank(machineDTO.getIp())) {
-            query.setIp(machineDTO.getIp());
-        }
         Pageable pageable = PageRequest.of(pageDTO.getPageNum() -1, pageDTO.getPageSize());
-        Page<Machine> machinePage = machineRepository.findAll(Example.of(query), pageable);
+        Page<Machine> machinePage = machineRepository.findAll(MachineSpces.getPage(machineDTO), pageable);
         return PageDTO.of(machinePage, MachineDTO::new, BeanUtils::copyProperties);
     }
 
@@ -77,5 +72,13 @@ public class MachineServiceImpl implements MachineService {
             machineDTOList.add(machineDTO);
         });
         return machineDTOList;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        if (!machineRepository.findById(id).isPresent()) {
+            throw new BizException("该机器已被删除");
+        }
+        machineRepository.deleteById(id);
     }
 }

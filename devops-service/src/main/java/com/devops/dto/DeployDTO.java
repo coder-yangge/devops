@@ -1,5 +1,6 @@
 package com.devops.dto;
 
+import com.devops.common.acount.Account;
 import lombok.Data;
 
 /**
@@ -16,4 +17,8 @@ public class DeployDTO {
     private String env;
 
     private Integer recordId;
+
+    private String remark;
+
+    private Account account;
 }

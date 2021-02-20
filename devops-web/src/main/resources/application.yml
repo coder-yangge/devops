@@ -47,8 +47,6 @@ spring:
       pool:
         max-size: 10
       thread-name-prefix: async-service-
-
-
 logging:
   level:
     org.springframework.web: info

@@ -2,8 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>构建记录列表</title>
-    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all"/>
+    <title>机器列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
     <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
 </head>
 <script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
@@ -17,8 +23,8 @@
         form.render();
         form.on('submit(query)', function (data) {
             var param = JSON.stringify(data.field);
-            table.reload('packageRecord',{
-                url: '${request.contextPath}/package/record/page',
+            table.reload('machine',{
+                url: '${request.contextPath}/machine/page',
                 where: data.field
             });
             return false;
@@ -28,8 +34,8 @@
     $(function (){
         var table = layui.table;
         table.render({
-            elem: '#packageRecord'
-            ,url:'${request.contextPath}/package/record/page'
+            elem: '#machine'
+            ,url:'${request.contextPath}/machine/page'
             ,hight:380
             ,method: 'post'
             ,contentType: 'application/json'
@@ -51,39 +57,51 @@
             }
             ,cols: [[
                 {type: 'checkbox', fixed: 'left'}
-                ,{field:'id', align: 'center', title: '构建ID', sort: true}
-                ,{field:'applicationName',  title: '应用名称' , align: 'center'}
-                ,{field:'name', title: '备注', sort: true, align: 'center'}
-                ,{field:'branch',  title: '分支' , align: 'center'}
-                ,{field:'createUser', title: '创建人', align: 'center'}
-                ,{field:'createDate', title: '创建时间', align: 'center'}
-                ,{field:'version', title: '版本', align: 'center'}
+                ,{field:'id', align: 'center', title: 'ID', sort: true}
+                ,{field:'name',  title: '名称' , align: 'center'}
+                ,{field:'ip', title: 'ip', sort: true, align: 'center'}
+                ,{field:'sshUserName', title: '账号', align: 'center'}
+                ,{field:'sshPassword', title: '密码', align: 'center'}
                 ,{fixed: 'right', width:200, title:'操作', toolbar: '#barDemo', align: 'center'}
             ]]
             ,page: true
         });
         //监听行工具事件
-        table.on('tool(packageRecord)', function(obj){
+        table.on('tool(machine)', function(obj){
             var data = obj.data;
-            //console.log(obj)
             if(obj.event === 'detail'){
                 //var resourceName = encodeURI(encodeURI(data.diagramResourceName));
                 var flag= true;
                 layer.open({
                     type: 2,
-                    title: "详情",
+                    title: "编辑",
                     skin: 'layui-layer-molv',
-                    area: ['80%', '90%'],
-                    content: "${request.contextPath}/package/record/detail?id=" + data.id
+                    area: ['80%', '80%'],
+                    content: "${request.contextPath}/machine/editPage?id=" + data.id,
+                    btn: ['取消'],
+                    btnAlign: 'c',
+                    yes: function(index, layero){
+                        flag = false;
+                        layer.close(index);
+                    },
+                    end: function(){
+                        if(flag) {
+                            layer.msg("保存成功");
+                            reloadTable();
+                        }
+                    }
                 });
             }
         });
 
         //头工具栏事件
-        table.on('toolbar(packageRecord)', function(obj){
+        table.on('toolbar(machine)', function(obj){
             var checkStatus = table.checkStatus(obj.config.id);
             var data = checkStatus.data;
             switch(obj.event){
+                case 'add':
+                    addMachine();
+                    break;
                 case 'delete':
                     if (data.length > 1){
                         layer.msg("目前暂支持选中一行");
@@ -96,17 +114,15 @@
                     var params = data[0].id;
                     $.ajax({
                         type: 'DELETE',
-                        url: '${request.contextPath}/package/record/' + params,
+                        url: '${request.contextPath}/machine/' + params,
                         success: function(response){
                             if (response.success) {
                                 layer.open({
-                                    offset: '100px',
                                     skin: 'layui-layer-molv',
                                     content: "删除成功"
                                 });
                             } else {
                                 layer.open({
-                                    offset: '100px',
                                     skin: 'layui-layer-molv',
                                     content: "" + response.message
                                 });
@@ -120,34 +136,62 @@
     });
     function reloadTable(){
         var table = layui.table;
-        table.reload('packageRecord',{
-            url: '${request.contextPath}/package/record/page'
+        table.reload('machine',{
+            url: '${request.contextPath}/machine/page'
         });
     }
 
+    //添加
+    function addMachine(){
+        var index = layui.layer.open({
+            title : "新增",
+            type : 2,
+            content : "${request.contextPath}/machine/savePage",
+            success : function(layero, index){
+                setTimeout(function(){
+                    layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                },500)
+            }
+        });
+        layui.layer.full(index);
+        window.sessionStorage.setItem("index",index);
+        //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+        $(window).on("resize",function(){
+            layui.layer.full(window.sessionStorage.getItem("index"));
+        })
+    }
 </script>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
 </script>
 
 <script type="text/html" id="toolsBar">
+    <a class="layui-btn layui-btn-xs" lay-event="add">新增</a>
     <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
 </script>
 <body class="childrenBody">
 <div class="table-list roll-x">
     <fieldset class="layui-elem-field">
-        <legend></legend>
+        <legend>查询条件</legend>
         <div class="layui-field-box">
-            <form class="layui-form" id="packageRecordForm">
+            <form class="layui-form" id="machineForm">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">应用名称</label>
+                        <label class="layui-form-label">名称</label>
                         <div class="layui-input-inline" style="max-width: 300px;">
                             <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
+                        <label class="layui-form-label">ip</label>
                         <div class="layui-input-inline" style="max-width: 300px;">
+                            <input type="text" name="ip" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
                             <button lay-submit="" lay-filter="query" class="layui-btn">查询</button>
                         </div>
                     </div>
@@ -156,7 +200,7 @@
             </form>
         </div>
     </fieldset>
-    <table class="layui-hide" id="packageRecord" lay-filter="packageRecord"></table>
+    <table class="layui-hide" id="machine" lay-filter="machine"></table>
 </div>
 </body>
 </html>

@@ -9,4 +9,6 @@ import java.util.List;
 public interface ClusterMachineRepository extends JpaRepository<ClusterMachine, Integer>, JpaSpecificationExecutor<ClusterMachine> {
 
     List<ClusterMachine> getAllByClusterId(Integer clusterId);
+
+    int deleteByClusterId(Integer clusterId);
 }

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
+</head>
+<script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
+<script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
+<script type="text/javascript">
+    ;!function(){
+        var layer = layui.layer
+            ,form = layui.form;
+
+    }();
+    $(function (){
+        var layer = layui.layer
+        var form = layui.form;
+            $ = layui.jquery;
+        var table = layui.table;
+        table.render({
+            elem: '#addMachine'
+            ,data: []
+            ,skin: 'line'
+            ,cols: [[
+                {field:'id', align: 'center', title: 'ID'}
+                ,{field:'name',  title: '名称' , align: 'center'}
+                ,{field:'ip', title: 'ip', align: 'center'}
+                ,{field:'sshUserName', title: '账号', align: 'center'}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', align: 'center'}
+            ]]
+        });
+        //监听行工具事件
+        table.on('tool(addMachine)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'delete'){
+                var id = data.id;
+                var tableBak = table.cache.addMachine;
+                if (tableBak.length > 0) {
+                    for (var i = 0; i < tableBak.length; i++) {
+                        // 删除数据
+                        if (tableBak[i].id == id) {
+                            tableBak.splice(i, 1);
+                        }
+                    }
+                    table.reload("addMachine",{
+                        data: tableBak   // 将新数据重新载入表格
+                    });
+                }
+            }
+        });
+        form.render();
+        form.on('submit(query)', function (data) {
+            var param = JSON.stringify(data.field);
+            table.reload('machine',{
+                url:'${request.contextPath}/machine/page',
+                where: data.field
+            });
+            return false;
+        });
+        form.on('submit(save)', function (data) {
+            //弹出loading
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            var formData = data.field
+            var machineList = [];
+            var tableData = table.cache.addMachine;
+            if (tableData.length > 0) {
+                for (var i = 0; i < tableData.length; i++) {
+                    machineList.push(tableData[i]);
+                }
+            }
+            formData.machineList = machineList;
+            var param = JSON.stringify(formData);
+            console.log(param);
+            $.ajax({
+                type: "PUT",
+                url: "${request.contextPath}/cluster",
+                data: param,
+                contentType: 'application/json',
+                success: function (data) {
+                    var message = "";
+                    if (data.success) {
+                        message = "保存成功";
+                    } else {
+                        message = data.message;
+                    }
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
+                }
+            });
+            return false;
+        });
+    });
+
+    function showMachine() {
+        layer.open({
+            type: 1,
+            title: "服务器列表",
+            skin: 'layui-layer-molv',
+            area: ['80%', '90%'],
+            content: $("#queryMachineDiv"),
+            btn: ['确定', '取消'],
+            btnAlign: 'c',
+            shade: 0.6,
+            yes: function(index, layero){
+                var checkStatus = table.checkStatus('machine');
+                if (checkStatus.data.length > 0) {
+                    var data = checkStatus.data;
+                    //定义一个空数组,用来存储之前编辑过的数据已经存放新数据
+                    var dataBak = [];
+                    var tableBak = table.cache.addMachine;
+                    if (tableBak.length > 0) {
+                        for (var i = 0; i < tableBak.length; i++) {
+                            // 将之前的数组备份
+                            dataBak.push(tableBak[i]);
+                        }
+                        for (var j = 0; j < data.length; j++) {
+                            // 去除重复的数据
+                            var flag = false
+                            for (var i = 0; i < dataBak.length; i++) {
+                                //将之前的数组备份
+                                if (tableBak[i].id == data[j].id) {
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag) {
+                                dataBak.push(data[j]);
+                            }
+                        }
+                    } else {
+                        if (data.length > 0) {
+                            for (var i = 0; i < data.length; i++) {
+                                //将之前的数组备份
+                                dataBak.push(data[i]);
+                            }
+                        }
+                    }
+                    table.reload("addMachine",{
+                        data: dataBak   // 将新数据重新载入表格
+                    });
+                    layer.close(index);
+                } else {
+                    layer.msg("请选择数据");
+                }
+            },
+            btn2: function(index, layero){
+                layer.close(index);
+            }
+        });
+        var table = layui.table;
+        table.render({
+            elem: '#machine'
+            ,url:'${request.contextPath}/machine/page'
+            ,hight:380
+            ,method: 'post'
+            ,contentType: 'application/json'
+            ,parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.data //解析数据列表
+                };
+            }
+            ,request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            ,response: {
+                statusCode: 200
+            }
+            ,cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'id', align: 'center', title: 'ID', sort: true}
+                ,{field:'name',  title: '名称' , align: 'center'}
+                ,{field:'ip', title: 'ip', sort: true, align: 'center'}
+                ,{field:'sshUserName', title: '账号', align: 'center'}
+            ]]
+            ,page: true
+            ,limit: 8
+        });
+    }
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+</script>
+<body class="childrenBody">
+<fieldset class="layui-elem-field">
+    <legend>新增</legend>
+    <div class="layui-field-box">
+        <form class="layui-form" id="businessLineForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block" style="max-width: 300px;">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">desc</label>
+                <div class="layui-input-block" style="max-width: 500px;">
+                    <input type="text" name="desc" lay-verify="" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="float: right">
+                    <a onclick="showMachine()" class="layui-btn layui-btn-sm">添加机器</a>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <table class="layui-hide" name ="addMachine" id="addMachine" lay-filter="addMachine"></table>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</fieldset>
+</body>
+
+<div class="table-list roll-x" style="display:none;" id="queryMachineDiv">
+    <fieldset class="layui-elem-field">
+        <legend>查询条件</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" id="machineForm">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">名称</label>
+                        <div class="layui-input-inline" style="max-width: 300px;">
+                            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">ip</label>
+                        <div class="layui-input-inline" style="max-width: 300px;">
+                            <input type="text" name="ip" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <button lay-submit="" lay-filter="query" class="layui-btn">查询</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </fieldset>
+    <table class="layui-hide" id="machine" lay-filter="machine"></table>
+</div>
+</html>

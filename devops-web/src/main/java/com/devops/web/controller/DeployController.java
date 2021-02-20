@@ -1,5 +1,6 @@
 package com.devops.web.controller;
 
+import com.devops.common.acount.AccountContextHolder;
 import com.devops.common.constants.SystemProperties;
 import com.devops.common.enums.DeployTypeEnum;
 import com.devops.common.exception.BizException;
@@ -12,6 +13,7 @@ import com.devops.service.ApplicationService;
 import com.devops.service.MachineService;
 import com.devops.service.PackageRecordService;
 import com.devops.web.common.vo.ResponseVo;
+import com.devops.web.form.DeployForm;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +48,10 @@ public class DeployController {
         return ResponseVo.ResponseBuilder.buildSuccess(Lists.newArrayList(name));
     }
 
-    @PostMapping("/{applicationId}/{env}/{packageRecordId}")
-    public ResponseVo deploy(@PathVariable("applicationId") Integer applicationId,
-                             @PathVariable("env") String env,
-                             @PathVariable("packageRecordId") Integer packageRecordId) {
+    @PostMapping("/application")
+    public ResponseVo deploy(@RequestBody DeployForm deployForm) {
         // TODO 根据环境查询对用的应用信息
-        ApplicationDto applicationDto = applicationService.findById(applicationId);
+        ApplicationDto applicationDto = applicationService.findById(deployForm.getApplicationId());
         if (ObjectUtils.isEmpty(applicationDto)) {
             throw new BizException("应用不存在");
         }
@@ -60,8 +60,10 @@ public class DeployController {
         DeployTypeEnum deployTypeEnum = DeployTypeEnum.get(applicationDto.getEnvironment().getDeployType());
         DeployDTO deployDTO = new DeployDTO();
         deployDTO.setApplicationDto(applicationDto);
-        deployDTO.setRecordId(packageRecordId);
-        deployDTO.setEnv(env);
+        deployDTO.setRecordId(deployForm.getPackageRecordId());
+        deployDTO.setEnv(deployForm.getEnv());
+        deployDTO.setRemark(deployForm.getRemark());
+        deployDTO.setAccount(AccountContextHolder.getAccount());
         switch (deployTypeEnum) {
             case MACHINE:
                 deployHandler.deployApp(deployDTO);

@@ -24,6 +24,8 @@ public class ExcelUtils {
 
     public static final String TEMPLATE = "templates";
 
+
+
     /**
      * 导出Excel
      *
@@ -32,12 +34,24 @@ public class ExcelUtils {
      * @param outputStream 输出流
      */
     public static void exportExcel(String template, Map<String, Object> param, OutputStream outputStream) {
+        exportExcel(template, param, outputStream, false);
+    }
+
+    /**
+     * 导出Excel
+     *
+     * @param template     模板名称
+     * @param param        数据
+     * @param outputStream 输出流
+     * @param formulas 是否使用excel函数
+     */
+    public static void exportExcel(String template, Map<String, Object> param, OutputStream outputStream, boolean formulas) {
         JxlsHelper jxlsHelper = JxlsHelper.getInstance();
         InputStream inputStream = null;
         try {
             File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + TEMPLATE + File.separator + template);
             inputStream = new FileInputStream(file);
-            jxlsHelper.setEvaluateFormulas(false).processTemplate(inputStream, outputStream, new Context(param));
+            jxlsHelper.setEvaluateFormulas(formulas).processTemplate(inputStream, outputStream, new Context(param));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

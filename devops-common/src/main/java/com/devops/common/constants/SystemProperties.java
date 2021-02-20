@@ -19,6 +19,8 @@ public class SystemProperties {
 
     public static final String COMPILE_LOG_TOPIC = "/queue/compile/log";
 
+    public static final String DEPLOY_LOG_TOPIC = "/queue/deploy/log";
+
     public static String OS;
 
     static {

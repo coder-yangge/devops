@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${request.contextPath}/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="${request.contextPath}/css/public.css" media="all" />
+</head>
+<script src="${request.contextPath}/layui/layui.all.js" charset="utf-8"></script>
+<script src="${request.contextPath}/jquery/jquery.js" charset="utf-8"></script>
+<script type="text/javascript">
+    ;!function(){
+        var layer = layui.layer
+            ,form = layui.form;
+
+    }();
+    $(function (){
+        var form = layui.form;
+        layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
+        form.render();
+        form.on('submit(save)', function (data) {
+            //弹出loading
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            var param = JSON.stringify(data.field);
+            $.ajax({
+                type: "PUT",
+                url: "${request.contextPath}/machine/save",
+                data: param,
+                contentType: 'application/json',
+                success: function (data) {
+                    var message = "";
+                    if (data.success) {
+                        message = "保存成功";
+                    } else {
+                        message = data.message;
+                    }
+                    setTimeout(function(){
+                        top.layer.close(index);
+                        top.layer.msg(message);
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
+                }
+            });
+            return false;
+        });
+    });
+
+    function back() {
+        history.back();
+    }
+</script>
+<body class="childrenBody">
+<fieldset class="layui-elem-field">
+    <legend>新增</legend>
+    <div class="layui-field-box">
+        <form class="layui-form" id="businessLineForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block" style="max-width: 300px;">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">ip</label>
+                <div class="layui-input-block" style="max-width: 500px;">
+                    <input type="text" name="ip" lay-verify="" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">SSH账号</label>
+                <div class="layui-input-block" style="max-width: 500px;">
+                    <input type="text" name="sshUserName" lay-verify="" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block" style="max-width: 500px;">
+                    <input type="text" name="sshPassword" lay-verify="" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit="" lay-filter="save" class="layui-btn">保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</fieldset>
+</body>
+</html>

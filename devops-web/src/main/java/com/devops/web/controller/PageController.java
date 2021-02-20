@@ -61,6 +61,22 @@ public class PageController {
         return "/devops/service/serviceEdit";
     }
 
+    @GetMapping("/machine/index")
+    public String machine() {
+        return "/devops/cluster/machine";
+    }
+
+    @GetMapping("/machine/savePage")
+    public String saveMachinePage() {
+        return "/devops/cluster/machineAdd";
+    }
+
+    @GetMapping("/machine/editPage")
+    public String editMachinePage(@RequestParam("id") Integer serviceId, ModelMap modelMap) {
+        modelMap.put("id", serviceId);
+        return "/devops/cluster/machineEdit";
+    }
+
     @GetMapping("/application/index")
     public String application() {
         return "/devops/application/application";
@@ -71,9 +87,36 @@ public class PageController {
         return "/devops/application/applicationAdd";
     }
 
+    @GetMapping("/deploy/page")
+    public String deployPage() {
+        return "/devops/deploy/deploy";
+    }
+
     @GetMapping("/package/record/index")
     public String packageRecord() {
         return "/devops/record/packageRecord";
+    }
+
+    @GetMapping("/package/record/detail")
+    public String packageRecordDetail(@RequestParam("id") Integer recordId, ModelMap modelMap) {
+        modelMap.put("id", recordId);
+        return "/devops/record/detail";
+    }
+
+    @GetMapping("/cluster/index")
+    public String cluster() {
+        return "/devops/cluster/cluster";
+    }
+
+    @GetMapping("/cluster/savePage")
+    public String saveClusterPage() {
+        return "/devops/cluster/clusterAdd";
+    }
+
+    @GetMapping("/cluster/editPage")
+    public String editClusterPage(@RequestParam("id") Integer serviceId, ModelMap modelMap) {
+        modelMap.put("id", serviceId);
+        return "/devops/cluster/clusterEdit";
     }
 
     @GetMapping("/account/loginOut")

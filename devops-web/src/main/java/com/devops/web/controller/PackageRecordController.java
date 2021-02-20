@@ -37,4 +37,10 @@ public class PackageRecordController {
         packageRecordService.deleteRecord(recordId);
         return ResponseVo.ResponseBuilder.buildSuccess();
     }
+
+    @GetMapping("/{id}")
+    public ResponseVo getRecord(@PathVariable("id") Integer recordId) {
+        PackageRecordDTO recordDTO = packageRecordService.getById(recordId);
+        return ResponseVo.ResponseBuilder.buildSuccess(recordDTO);
+    }
 }

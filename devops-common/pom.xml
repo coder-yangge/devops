@@ -67,7 +67,11 @@
             <artifactId>org.eclipse.jgit</artifactId>
             <version>5.8.0.202006091008-r</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
     </dependencies>
 
     <build>

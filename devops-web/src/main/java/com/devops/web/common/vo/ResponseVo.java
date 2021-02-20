@@ -80,5 +80,10 @@ public class ResponseVo<T> {
 
             return buildSuccess(500, "", false, null);
         }
+        public static ResponseVo buildFailed(String msg){
+
+            return buildSuccess(500, msg, false, null);
+        }
+
     }
 }

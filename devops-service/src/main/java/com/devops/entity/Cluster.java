@@ -16,10 +16,10 @@ public class Cluster implements Serializable {
     @Column(name = "id", insertable = false, nullable = false)
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "`name`", nullable = false)
     private String name;
 
-    @Column(name = "desc")
+    @Column(name = "`desc`")
     private String desc;
 
     
